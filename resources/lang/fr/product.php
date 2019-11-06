@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'product' => 'Produits',
+    'single.product' => 'Produit',
+    'tab.main' => 'Détails',
+    'block.general' => 'Informations générales',
+    'field.name' => 'Modèle',
+    'field.brand' => 'Marque',
+    'field.vendor_reference' => 'Référence fournisseur',
+    'field.family' => 'Famille',
+    'field.vendor' => 'Fournisseur',
+    'field.parent' => 'Produit parent',
+    'block.business' => 'Informations commerciales',
+    'field.selling_price' => 'Prix de vente',
+    'field.purchase_price' => 'Prix d\'achat',
+    'field.margin' => 'Marge',
+    'field.delivery_costs' => 'Frais livraison et installation',
+    'field.seller_commission' => 'Commission vendeur',
+    'block.stock' => 'Stock',
+    'field.stock_quantity' => 'Quantité en stock',
+    'field.unit' => 'Unité',
+    'field.serial_number' => 'Numéro de série',
+    'relatedlist.documents' => 'Documents',
+];

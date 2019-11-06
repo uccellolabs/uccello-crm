@@ -1,0 +1,41 @@
+{
+    "name": "uccello/crm",
+    "description": "This package adds modules to create a complete CRM with Uccello.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonathan sARDO",
+            "email": "jonathan@uccellolabs.com"
+        }
+    ],
+    "require": {
+        "uccello/uccello": "1.0.*",
+        "uccello/address": "dev-master",
+        "uccello/calendar": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Uccello\\Crm\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Uccello\\Crm\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Uccello\\Crm\\Providers\\AppServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
