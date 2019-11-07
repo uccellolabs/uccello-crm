@@ -47,36 +47,36 @@
     </div>
 
     <div class="detail-blocks">
-        @section('default-blocks')
-            <div class="tab-content">
-                {{-- Summary --}}
-                @if ($widgets->count() > 0)
-                <div role="tabpanel" id="summary" class="tab-pane fade in @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $widgets->count() > 0) || $selectedTabId === 'summary')active @endif" >
-                    @include('crm::modules.opportunity.detail.summary')
-                </div>
-                @endif
-
-                {{-- Tabs and blocks --}}
-                @foreach ($module->tabs as $i => $tab)
-                <div role="tabpanel" id="{{ $tab->id }}" class="tab-pane fade in @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $i === 0 && $widgets->count() === 0) || $selectedTabId === $tab->id)active @endif">
-                    {{-- Blocks --}}
-                    @include('uccello::modules.default.detail.blocks')
-
-                    {{-- Related lists as blocks --}}
-                    @include('uccello::modules.default.detail.relatedlists.as-blocks')
-                </div>
-                @endforeach
-
-                {{-- Related lists as tabs --}}
-                @include('uccello::modules.default.detail.relatedlists.as-tabs')
-
-                {{-- Other tabs --}}
-                @yield('other-tabs')
+        @section('default-tabs')
+            {{-- Summary --}}
+            @if ($widgets->count() > 0)
+            <div id="summary" @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $widgets->count() > 0) || $selectedTabId === 'summary')class="active"@endif>
+                @include('crm::modules.opportunity.detail.summary')
             </div>
-        @show
+            @endif
 
-        {{-- Other blocks --}}
-        @yield('other-blocks')
+            {{-- Tabs and blocks --}}
+            @foreach ($module->tabs as $i => $tab)
+            <div id="tab_{{ $tab->id }}" @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $i === 0 && $widgets->count() === 0) || $selectedTabId === $tab->id)class="active"@endif>
+                {{-- Blocks --}}
+                @include('uccello::modules.default.detail.blocks')
+
+                {{-- Related lists as blocks --}}
+                @include('uccello::modules.default.detail.relatedlists.as-blocks')
+
+                {{-- Other blocks --}}
+                @if ($i === 0)
+                    @yield('other-blocks')
+                @endif
+            </div>
+            @endforeach
+
+            {{-- Related lists as tabs --}}
+            @include('uccello::modules.default.detail.relatedlists.as-tabs')
+
+            {{-- Other tabs --}}
+            @yield('other-tabs')
+        @show
     </div>
 
     {{-- Action buttons --}}

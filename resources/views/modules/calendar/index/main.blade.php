@@ -20,5 +20,5 @@
 @endsection
 
 @section('extra-script')
-{!! Html::script(mix('js/calendar/modal.js')) !!}
+{!! Html::script(mix('js/calendar/modal.js', 'vendor/uccello/crm')) !!}
 @append

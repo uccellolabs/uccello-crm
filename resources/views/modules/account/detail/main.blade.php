@@ -41,12 +41,17 @@
 
             {{-- Tabs and blocks --}}
             @foreach ($module->tabs as $i => $tab)
-            <div id="{{ $tab->id }}" @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $i === 0 && $widgets->count() === 0) || $selectedTabId === $tab->id)class="active"@endif>
+            <div id="tab_{{ $tab->id }}" @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $i === 0 && $widgets->count() === 0) || $selectedTabId === $tab->id)class="active"@endif>
                 {{-- Blocks --}}
                 @include('uccello::modules.default.detail.blocks')
 
                 {{-- Related lists as blocks --}}
                 @include('uccello::modules.default.detail.relatedlists.as-blocks')
+
+                {{-- Other blocks --}}
+                @if ($i === 0)
+                    @yield('other-blocks')
+                @endif
             </div>
             @endforeach
 
@@ -56,9 +61,6 @@
             {{-- Other tabs --}}
             @yield('other-tabs')
         @show
-
-        {{-- Other blocks --}}
-        @yield('other-blocks')
     </div>
 
     {{-- Action buttons --}}
@@ -66,39 +68,3 @@
         @include('uccello::modules.default.detail.buttons')
     @show
 @endsection
-
-@section('extra-script')
-<script>
-$(document).ready(function() {
-    var taskListContentUrl = "{{ ucroute('uccello.list.content', $domain, ucmodule('task')) }}"
-
-    $('#tasks-period').on('change', (ev) => {
-        var value = $(ev.currentTarget).val()
-        var dateStart, dateEnd = ''
-        switch(value) {
-            case 'today':
-                dateStart = dateEnd = moment().format('YYYY-MM-DD')
-            break
-
-            case 'month':
-                dateStart = moment().startOf('month').format('YYYY-MM-DD')
-                dateEnd = moment().endOf('month').format('YYYY-MM-DD')
-            break
-
-            case 'week':
-            default:
-                dateStart = moment().lang($('html').attr('lang')).startOf('week').format('YYYY-MM-DD')
-                dateEnd = moment().lang($('html').attr('lang')).endOf('week').format('YYYY-MM-DD')
-            break
-        }
-
-        var url = taskListContentUrl+"?start="+dateStart+"&end="+dateEnd
-
-        $('.tasks-widget-card table').attr('data-content-url', url)
-        var datatableId = $('.tasks-widget-card table').attr('id')
-        var event = new CustomEvent('uccello.list.refresh', {detail: datatableId});
-        dispatchEvent(event);
-    })
-})
-</script>
-@append
