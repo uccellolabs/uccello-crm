@@ -56,6 +56,37 @@ class Account extends Model implements Searchable
         $this->tablePrefix = 'crm_';
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            static::changeLeadStatus($model);
+        });
+
+        static::updating(function ($model) {
+            static::changeLeadStatus($model);
+        });
+    }
+
+    public static function changeLeadStatus($model)
+    {
+        // Change lead_status according to type
+        if ($model->type === 'type.prospect' && is_null($model->lead_status)) {
+            $model->lead_status = 'status.new';
+        }
+        elseif ($model->type === 'type.lead' && is_null($model->lead_status)) {
+            $model->lead_status = 'status.contacted';
+        }
+        // Change type according to lead_status
+        elseif ($model->lead_status === 'status.new' && $model->type === 'type.lead') {
+            $model->type = 'type.prospect';
+        }
+        elseif ($model->lead_status !== 'status.new' && $model->type === 'type.prospect') {
+            $model->type = 'type.lead';
+        }
+    }
+
     public function assigned_user()
     {
         return $this->belongsTo(\Uccello\Core\Models\User::class);
