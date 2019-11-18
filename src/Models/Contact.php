@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Uccello\Core\Database\Eloquent\Model;
-use Uccello\Address\Models\Country;
 use Uccello\Core\Support\Traits\UccelloModule;
+use Uccello\Country\Models\Country;
 
 class Contact extends Model implements Searchable
 {

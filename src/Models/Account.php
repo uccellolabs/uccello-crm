@@ -5,9 +5,9 @@ namespace Uccello\Crm\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
-use Uccello\Address\Models\Country;
 use Uccello\Core\Database\Eloquent\Model;
 use Uccello\Core\Support\Traits\UccelloModule;
+use Uccello\Country\Models\Country;
 
 class Account extends Model implements Searchable
 {
