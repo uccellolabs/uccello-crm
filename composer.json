@@ -11,7 +11,7 @@
     ],
     "require": {
         "uccello/uccello": "1.0.*",
-        "uccello/address": "dev-master",
+        "uccello/country": "dev-master",
         "uccello/calendar": "dev-master"
     },
     "autoload": {
