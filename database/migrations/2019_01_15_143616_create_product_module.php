@@ -69,9 +69,11 @@ class CreateProductModule extends Migration
             $table->decimal('seller_commission', 13, 2)->nullable();
             $table->integer('stock_quantity')->nullable();
             $table->string('unit')->nullable();
-            $table->string('vtiger_id')->nullable();
+            $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
         });
     }
 

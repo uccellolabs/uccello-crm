@@ -60,8 +60,11 @@ class CreateBusinessProviderModule extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->text('description')->nullable();
+            $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
         });
     }
 

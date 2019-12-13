@@ -58,8 +58,11 @@ class CreateProductFamilyModule extends Migration
             $table->string('name');
             $table->unsignedInteger('parent')->nullable();
             $table->string('color')->nullable();
+            $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
         });
     }
 

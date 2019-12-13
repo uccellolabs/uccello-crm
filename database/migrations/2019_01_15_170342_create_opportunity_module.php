@@ -67,9 +67,11 @@ class CreateOpportunityModule extends Migration
             $table->string('assigned_user_id')->nullable();
             $table->decimal('amount', 13, 2)->nullable();
             $table->text('description')->nullable();
-            $table->string('vtiger_id')->nullable();
+            $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
         });
     }
 

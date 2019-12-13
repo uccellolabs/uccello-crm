@@ -57,8 +57,11 @@ class CreateDocumentModule extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('file');
+            $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
         });
     }
 

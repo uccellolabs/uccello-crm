@@ -80,9 +80,11 @@ class CreateAccountModule extends Migration
             $table->text('employees_address')->nullable();
             $table->text('employees_france')->nullable();
             $table->text('description')->nullable();
-            $table->string('vtiger_id')->nullable();
+            $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
         });
     }
 
