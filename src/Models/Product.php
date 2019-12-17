@@ -52,9 +52,19 @@ class Product extends Tree
     {
         parent::boot();
 
+        // Calculate margin
+        static::creating(function ($model) {
+            $model->margin = $model->selling_price - $model->purchase_price;
+        });
+
         // Linck to parent record
         static::created(function ($model) {
             static::linkToParentRecord($model);
+        });
+
+        // Calculate margin
+        static::updating(function ($model) {
+            $model->margin = $model->selling_price - $model->purchase_price;
         });
 
         static::updated(function ($model) {

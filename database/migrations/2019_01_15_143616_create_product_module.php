@@ -299,7 +299,7 @@ class CreateProductModule extends Migration
             'uitype_id' => uitype('number')->id,
             'displaytype_id' => displaytype('detail')->id,
             'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
+            'data' => json_decode('{"step":0.01,"precision":2}')
         ]);
 
         // Field delivery_costs
