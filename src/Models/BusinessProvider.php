@@ -27,6 +27,20 @@ class BusinessProvider extends Model implements Searchable
      */
     protected $dates = ['deleted_at'];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'phone',
+        'email',
+        'description',
+        'domain_id',
+    ];
+
     public $searchableType = 'business-provider';
 
     public $searchableColumns = [

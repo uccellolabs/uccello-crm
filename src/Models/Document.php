@@ -27,6 +27,17 @@ class Document extends Model implements Searchable
      */
     protected $dates = ['deleted_at'];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'file',
+        'domain_id',
+    ];
+
     public $searchableType = 'document';
 
     public $searchableColumns = [

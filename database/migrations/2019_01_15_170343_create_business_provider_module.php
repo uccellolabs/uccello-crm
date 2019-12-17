@@ -55,16 +55,18 @@ class CreateBusinessProviderModule extends Migration
     {
         Schema::create($this->tablePrefix . 'business_providers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->text('description')->nullable();
+            $table->uuid('assigned_user_id')->nullable();
             $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
+            // $table->foreign('assigned_user_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'entities');
         });
     }
 
@@ -91,86 +93,111 @@ class CreateBusinessProviderModule extends Migration
     protected function createTabsBlocksFields($module)
     {
         // Tab tab.main
-        $tab = new Tab([
+        $tab = Tab::create([
             'module_id' => $module->id,
             'label' => 'tab.main',
             'icon' => null,
-            'sequence' => 0,
+            'sequence' => $module->tabs()->count(),
             'data' => null
         ]);
-        $tab->save();
 
         // Block block.general
-        $block = new Block([
+        $block = Block::create([
             'module_id' => $module->id,
             'tab_id' => $tab->id,
             'label' => 'block.general',
             'icon' => 'info',
-            'sequence' => 0,
+            'sequence' => $tab->blocks()->count(),
             'data' => null
         ]);
-        $block->save();
 
         // Field first_name
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'first_name',
             'uitype_id' => uitype('text')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 0,
+            'sequence' => $block->fields()->count(),
             'data' => json_decode('{"rules":"required"}')
         ]);
-        $field->save();
 
         // Field last_name
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'last_name',
             'uitype_id' => uitype('text')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 1,
+            'sequence' => $block->fields()->count(),
             'data' => json_decode('{"rules":"required"}')
         ]);
-        $field->save();
 
         // Field phone
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'phone',
             'uitype_id' => uitype('phone')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 2,
+            'sequence' => $block->fields()->count(),
             'data' => null
         ]);
-        $field->save();
 
         // Field email
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'email',
             'uitype_id' => uitype('email')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 3,
+            'sequence' => $block->fields()->count(),
             'data' => null
         ]);
-        $field->save();
 
         // Field description
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'description',
             'uitype_id' => uitype('textarea')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 4,
+            'sequence' => $block->fields()->count(),
             'data' => null
         ]);
-        $field->save();
 
+        // Field assigned_user
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'assigned_user',
+            'uitype_id' => uitype('assigned_user')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"rules":"required"}')
+        ]);
+
+        // Field created_at
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'created_at',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field updated_at
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'updated_at',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
     }
 
     protected function createFilters($module)

@@ -10,9 +10,8 @@ use Uccello\Core\Models\Block;
 use Uccello\Core\Models\Field;
 use Uccello\Core\Models\Filter;
 use Uccello\Core\Models\Relatedlist;
-use Uccello\Core\Models\Link;
 
-class CreateProductModule extends Migration
+class CreateOpportunityModule extends Migration
 {
     /**
      * Run the migrations.
@@ -38,10 +37,10 @@ class CreateProductModule extends Migration
     public function down()
     {
         // Drop table
-        Schema::dropIfExists($this->tablePrefix . 'products');
+        Schema::dropIfExists($this->tablePrefix . 'opportunities');
 
         // Delete module
-        Module::where('name', 'product')->forceDelete();
+        Module::where('name', 'opportunity')->forceDelete();
     }
 
     protected function initTablePrefix()
@@ -53,35 +52,29 @@ class CreateProductModule extends Migration
 
     protected function createTable()
     {
-        Schema::create($this->tablePrefix . 'products', function (Blueprint $table) {
+        Schema::create($this->tablePrefix . 'opportunities', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('reference')->nullable();
-            $table->string('brand')->nullable();
-            $table->string('model')->nullable();
-            $table->string('serial_number')->nullable();
-            $table->unsignedInteger('family_id')->nullable();
-            $table->unsignedInteger('parent_id')->nullable();
-            $table->unsignedInteger('vendor_id')->nullable();
-            $table->string('vendor_reference')->nullable();
-            $table->decimal('selling_price', 13, 2)->nullable();
-            $table->decimal('purchase_price', 13, 2)->nullable();
-            $table->decimal('margin', 13, 2)->nullable();
-            $table->decimal('delivery_costs', 13, 2)->nullable();
-            $table->decimal('seller_commission', 13, 2)->nullable();
-            $table->integer('stock_quantity')->nullable();
-            $table->string('unit')->nullable();
-            $table->string('path')->nullable();
-            $table->integer('level')->default(0);
+            $table->unsignedInteger('account_id')->nullable();
+            $table->string('account_name')->nullable();
+            $table->string('type')->nullable();
+            $table->string('type_other')->nullable();
+            $table->string('origin')->nullable();
+            $table->unsignedInteger('business_provider_id')->nullable();
+            $table->string('phase')->nullable();
+            $table->string('step')->default('step.new')->nullable();
+            $table->date('contract_end_date')->nullable();
+            $table->date('closing_date')->nullable();
+            $table->decimal('amount', 13, 2)->nullable();
+            $table->text('description')->nullable();
             $table->uuid('assigned_user_id')->nullable();
             $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
-            $table->foreign('family_id')->references('id')->on($this->tablePrefix . 'product_families');
-            $table->foreign('parent_id')->references('id')->on($this->tablePrefix . 'products');
-            $table->foreign('vendor_id')->references('id')->on($this->tablePrefix . 'accounts');
+            $table->foreign('account_id')->references('id')->on($this->tablePrefix.'accounts');
+            $table->foreign('business_provider_id')->references('id')->on($this->tablePrefix.'business_providers');
             // $table->foreign('assigned_user_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'entities');
         });
     }
@@ -89,10 +82,10 @@ class CreateProductModule extends Migration
     protected function createModule()
     {
         $module = new Module([
-            'name' => 'product',
-            'icon' => 'list_alt',
-            'model_class' => 'Uccello\Crm\Models\Product',
-            'data' => [ 'package' => 'uccello/crm' ]
+            'name' => 'opportunity',
+            'icon' => 'attach_money',
+            'model_class' => 'Uccello\Crm\Models\Opportunity',
+            'data' => [ 'menu' => 'crm.opportunity.kanban', 'package' => 'uccello/crm' ]
         ]);
         $module->save();
         return $module;
@@ -138,92 +131,37 @@ class CreateProductModule extends Migration
             'data' => json_decode('{"rules":"required"}')
         ]);
 
-        // Field reference
+        // Field account
         Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'reference',
-            'uitype_id' => uitype('text')->id,
+            'name' => 'account',
+            'uitype_id' => uitype('entity')->id,
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
-            'data' => null,
+            'data' => json_decode('{"rules":"required","module":"account"}')
         ]);
 
-        // Field brand
+        // Field account_name
         Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'brand',
+            'name' => 'account_name',
             'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => null,
-        ]);
-
-        // Field model
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'model',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => null,
-        ]);
-
-        // Field serial_number
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'serial_number',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
+            'displaytype_id' => displaytype('hidden')->id,
             'sequence' => $block->fields()->count(),
             'data' => null
         ]);
 
-        // Field family
+        // Field amount
         Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'family',
-            'uitype_id' => uitype('entity')->id,
+            'name' => 'amount',
+            'uitype_id' => uitype('number')->id,
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"module":"product-family"}')
-        ]);
-
-        // Field parent
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'parent',
-            'uitype_id' => uitype('entity')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"module":"product"}')
-        ]);
-
-        // Field vendor
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'vendor',
-            'uitype_id' => uitype('entity')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"module":"account"}')
-        ]);
-
-        // Field vendor_reference
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'vendor_reference',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => null
+            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
         ]);
 
         // Field assigned_user
@@ -235,6 +173,125 @@ class CreateProductModule extends Migration
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
             'data' => json_decode('{"rules":"required"}')
+        ]);
+
+        // Field contract_end_date
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'contract_end_date',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field closing_date
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'closing_date',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field origin
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'origin',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                "rules" => "required",
+                "choices" => [
+                    "Kompass",
+                    "BNI",
+                    "Pro Contact",
+                    "Réseau Professionnel",
+                    "Relation",
+                    "Apporteur affaire",
+                    "Parc existant",
+                ]
+            ]
+        ]);
+
+        // Field business_provider
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'business_provider',
+            'uitype_id' => uitype('entity')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => [ 'module' => 'business-provider']
+        ]);
+
+        // Field type
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'type',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                "rules" => "required",
+                "choices" => [
+                    "Bureautique",
+                    "Informatique",
+                    "Écrans",
+                    "Téléphonie",
+                    "Autre",
+                ]
+            ]
+        ]);
+
+        // Field type_other
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'type_other',
+            'uitype_id' => uitype('text')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field phase
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'phase',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"rules":"required", "choices":["phase.1.outlook","phase.2.oppo_hight","phase.3.oppo_low","phase.4.project","phase.5.won", "phase.6.lost"]}')
+        ]);
+
+        // Field step
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'step',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('hidden')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"rules":"required", "choices":["step.qualification", "step.study", "step.proposal", "step.negociation", "step.won", "step.lost"], "default":"step.qualification"}')
+        ]);
+
+        // Field description
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'description',
+            'uitype_id' => uitype('textarea')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"large":false}')
         ]);
 
         // Field created_at
@@ -258,103 +315,6 @@ class CreateProductModule extends Migration
             'sequence' => $block->fields()->count(),
             'data' => null
         ]);
-
-        // Block block.business
-        $block = Block::create([
-            'module_id' => $module->id,
-            'tab_id' => $tab->id,
-            'label' => 'block.business',
-            'icon' => 'attach_money',
-            'sequence' => $tab->blocks()->count(),
-            'data' => null
-        ]);
-
-        // Field selling_price
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'selling_price',
-            'uitype_id' => uitype('number')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
-        ]);
-
-        // Field purchase_price
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'purchase_price',
-            'uitype_id' => uitype('number')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
-        ]);
-
-        // Field margin
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'margin',
-            'uitype_id' => uitype('number')->id,
-            'displaytype_id' => displaytype('detail')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
-        ]);
-
-        // Field delivery_costs
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'delivery_costs',
-            'uitype_id' => uitype('number')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
-        ]);
-
-        // Field seller_commission
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'seller_commission',
-            'uitype_id' => uitype('number')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":0.01,"precision":2}')
-        ]);
-
-        // Block block.stock
-        $block = Block::create([
-            'module_id' => $module->id,
-            'tab_id' => $tab->id,
-            'label' => 'block.stock',
-            'icon' => 'all_inbox',
-            'sequence' => $tab->blocks()->count(),
-            'data' => null
-        ]);
-
-        // Field stock_quantity
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'stock_quantity',
-            'uitype_id' => uitype('integer')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"min":0,"step":1,"precision":0}')
-        ]);
-
-        // Field unit
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'unit',
-            'uitype_id' => uitype('select')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"choices":["unit.fixed_price","unit.day","unit.unit"]}')
-        ]);
     }
 
     protected function createFilters($module)
@@ -366,18 +326,44 @@ class CreateProductModule extends Migration
             'user_id' => null,
             'name' => 'filter.all',
             'type' => 'list',
-            'columns' => ['name', 'brand', 'family', 'vendor', 'stock_quantity', 'selling_price', 'margin'],
+            'columns' => [ 'name', 'account', 'amount', 'phase', 'contract_end_date', 'closing_date', 'assigned_user', 'origin' ],
             'conditions' => null,
-            'order' => null,
+            'order' => [ 'phase' => 'asc' ],
             'is_default' => true,
             'is_public' => false
         ]);
         $filter->save();
 
+        $filter = new Filter([
+            'module_id' => $module->id,
+            'domain_id' => null,
+            'user_id' => null,
+            'name' => 'filter.related-list',
+            'type' => 'related-list',
+            'columns' => [ 'name', 'phase', 'amount', 'closing_date' ],
+            'conditions' => null,
+            'order' => [ 'phase' => 'asc' ],
+            'is_default' => true,
+            'is_public' => false
+        ]);
+        $filter->save();
     }
 
     protected function createRelatedLists($module)
     {
+        $accountModule = Module::where('name', 'account')->first();
+
+        Relatedlist::create([
+            'module_id' => $accountModule->id,
+            'related_module_id' => $module->id,
+            'related_field_id' => Field::where('module_id', $module->id)->where('name', 'account')->first()->id,
+            'label' => 'relatedlist.opportunities',
+            'type' => 'n-1',
+            'method' => 'getDependentList',
+            'sequence' => 1,
+            'data' => [ 'actions' => [ 'add' ], 'add_tab' => false ]
+        ]);
+
         $documentModule = Module::where('name', 'document')->first();
 
         Relatedlist::create([

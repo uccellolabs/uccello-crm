@@ -33,7 +33,21 @@ class Opportunity extends Model implements Searchable
     * @var array
     */
     protected $fillable = [
-       'vtiger_id'
+        'name',
+        'account_id',
+        'account_name',
+        'type',
+        'type_other',
+        'origin',
+        'business_provider_id',
+        'phase',
+        'step',
+        'contract_end_date',
+        'closing_date',
+        'assigned_user_id',
+        'amount',
+        'description',
+        'domain_id',
     ];
 
    public $searchableType = 'opportunity';

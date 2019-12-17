@@ -7,9 +7,8 @@ use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Uccello\Core\Database\Eloquent\Model;
 use Uccello\Core\Support\Traits\UccelloModule;
-use Uccello\Country\Models\Country;
 
-class Contact extends Model implements Searchable
+class Address extends Model implements Searchable
 {
     use SoftDeletes;
     use UccelloModule;
@@ -19,7 +18,7 @@ class Contact extends Model implements Searchable
      *
      * @var string
      */
-    protected $table = 'contacts';
+    protected $table = 'addresses';
 
     /**
      * The attributes that should be mutated to dates.
@@ -34,27 +33,30 @@ class Contact extends Model implements Searchable
      * @var array
      */
     protected $fillable = [
-        'civility',
-        'first_name',
-        'last_name',
+        'label',
         'account_id',
-        'phone',
-        'mobile',
-        'email',
-        'function',
-        'service',
-        'address_id',
+        'type',
+        'address_1',
+        'address_2',
+        'address_3',
+        'postal_code',
+        'city',
         'country_id',
-        'description',
-        'assigned_user_id',
+        'gln_code',
         'domain_id',
     ];
 
-    public $searchableType = 'contact';
+    protected function initTablePrefix()
+    {
+        $this->tablePrefix = 'crm_';
+    }
+
+    public $searchableType = 'address';
 
     public $searchableColumns = [
-        'first_name',
-        'last_name'
+        'address_1',
+        'address_2',
+        'address_3',
     ];
 
     public function getSearchResult(): SearchResult
@@ -65,29 +67,14 @@ class Contact extends Model implements Searchable
         );
     }
 
-    protected function initTablePrefix()
+    public function country()
     {
-        $this->tablePrefix = 'crm_';
-    }
-
-    public function assigned_user()
-    {
-        return $this->belongsTo(\Uccello\Core\Models\User::class);
+        return $this->belongsTo(\Uccello\Country\Models\Country::class);
     }
 
     public function account()
     {
         return $this->belongsTo(Account::class);
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
-    }
-
-    public function documents()
-    {
-        return $this->belongsToMany(Document::class, 'rl_contacts_documents')->withTimestamps();
     }
 
     /**
@@ -97,6 +84,6 @@ class Contact extends Model implements Searchable
     */
     public function getRecordLabelAttribute() : string
     {
-        return trim($this->first_name.' '.$this->last_name);
+        return $this->label;
     }
 }

@@ -56,13 +56,18 @@ class CreateProductFamilyModule extends Migration
         Schema::create($this->tablePrefix . 'product_families', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->unsignedInteger('parent')->nullable();
+            $table->unsignedInteger('parent_id')->nullable();
             $table->string('color')->nullable();
+            $table->string('path')->nullable();
+            $table->integer('level')->default(0);
+            $table->uuid('assigned_user_id')->nullable();
             $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
+            $table->foreign('parent_id')->references('id')->on($this->tablePrefix . 'product_families');
+            // $table->foreign('assigned_user_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'entities');
         });
     }
 
@@ -89,62 +94,89 @@ class CreateProductFamilyModule extends Migration
     protected function createTabsBlocksFields($module)
     {
         // Tab tab.main
-        $tab = new Tab([
+        $tab = Tab::create([
             'module_id' => $module->id,
             'label' => 'tab.main',
             'icon' => null,
-            'sequence' => 0,
+            'sequence' => $module->tabs()->count(),
             'data' => null
         ]);
-        $tab->save();
 
         // Block block.general
-        $block = new Block([
+        $block = Block::create([
             'module_id' => $module->id,
             'tab_id' => $tab->id,
             'label' => 'block.general',
             'icon' => 'info',
-            'sequence' => 0,
+            'sequence' => $tab->blocks()->count(),
             'data' => null
         ]);
-        $block->save();
 
         // Field name
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'name',
             'uitype_id' => uitype('text')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 0,
+            'sequence' => $block->fields()->count(),
             'data' => json_decode('{"rules":"required"}')
         ]);
-        $field->save();
 
         // Field parent
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'parent',
             'uitype_id' => uitype('entity')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 1,
-            'data' => json_decode('{"module":"product-family","field":"name"}')
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"module":"product-family"}')
         ]);
-        $field->save();
 
         // Field color
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'color',
             'uitype_id' => uitype('color')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 2,
+            'sequence' => $block->fields()->count(),
             'data' => null
         ]);
-        $field->save();
 
+        // Field assigned_user
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'assigned_user',
+            'uitype_id' => uitype('assigned_user')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"rules":"required"}')
+        ]);
+
+        // Field created_at
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'created_at',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field updated_at
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'updated_at',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
     }
 
     protected function createFilters($module)

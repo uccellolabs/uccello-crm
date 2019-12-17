@@ -2,77 +2,139 @@
 
 return [
     'account' => 'Comptes',
-    'single.account' => 'Compte',
-    'tab.main' => 'Détails',
-    'block.general' => 'Informations générales',
-    'field.name' => 'Raison sociale',
-    'field.type' => 'Type',
-    'field.email' => 'Email',
-    'field.phone' => 'Téléphone',
-    'field.fax' => 'Fax',
-    'field.website' => 'Site web',
-    'field.origin' => 'Origine compte',
-    'field.origin_other' => 'Origine (autre)',
-    'field.assigned_user' => 'Assigné à',
-    'field.classify' => 'À classer',
-    'block.billing_address' => 'Adresse de facturation',
-    'field.billing_lane' => 'Voie fact.',
-    'field.billing_postal_code' => 'CP fact.',
-    'field.billing_city' => 'Ville fact.',
-    'field.billing_country' => 'Pays fact.',
-    'block.shipping_address' => 'Adresse de livraison',
-    'field.shipping_lane' => 'Voie livr.',
-    'field.shipping_postal_code' => 'CP livr.',
-    'field.shipping_city' => 'Ville livr.',
-    'field.shipping_country' => 'Pays livr.',
-    'block.business' => 'Informations commerciales',
-    'field.siret' => 'Siret',
-    'field.business_provider' => 'Apporteur d\'affaires',
-    'field.business_sector' => 'Secteur',
-    'field.ape_code' => 'Code APE',
-    'block.description' => 'Description',
-    'field.description' => 'Description',
-    'field.sign' => 'Enseigne / Sigle',
-    'field.employees_address' => 'Effectif adresse',
-    'field.employees_france' => 'Effectif France',
-
-    // Relatedlist
-    'relatedlist.contacts' => 'Contacts',
-    'relatedlist.opportunities' => 'Affaires',
-    'relatedlist.pools' => 'Parc',
-    'relatedlist.documents' => 'Documents',
-    'relatedlist.tasks' => 'Activités',
-
-    // Status
-    'status.new' => '1. Nouveau',
-    'status.contacted' => '2. Contacté',
-    'status.discovery' => '3. Découverte',
-    'status.qualified' => '4. Qualifié',
-    'status.disqualified' => '5. Disqualifié',
-
-    // Type
-    'type.customer' => 'Client',
-    'type.prospect' => 'Prospect',
-    'type.lead' => 'Prospect ciblé',
-    'type.old_customer' => 'Ancien client',
-    'type.vendor' => 'Fournisseur',
-
-    // Employees
-    'employees.2_or_less' => '- de 2 salariés',
-    'employees.3_5' => '3-5 salariés',
-    'employees.6_9' => '6-9 salariés',
-    'employees.10_19' => '10-19 salariés',
-    'employees.20_49' => '20-49 salariés',
-    'employees.50_99' => '50-99 salariés',
-    'employees.100_or_more' => '+ de 100 salariés',
-
-    'filter.prospects' => 'Prospects',
-    'filter.leads' => 'Prospects ciblés',
-    'filter.customers' => 'Clients',
-
     'leads' => 'Prospects',
     'customers' => 'Clients',
+    'tab' => [
+        'main' => 'Détails',
+    ],
+    'block' => [
+        'general' => 'Informations générales',
+        'contact' => 'Coordonnées',
+        'administrative' => 'Informations administratives',
+    ],
+    'field' => [
+        'title' => 'Titre',
+        'name' => 'Nom',
+        'code' => 'Code',
+        'type' => 'Type',
+        'category' => 'Catégorie',
+        'email' => 'Email',
+        'phone' => 'Téléphone',
+        'fax' => 'Fax',
+        'website' => 'Site web',
+        'origin' => 'Origine compte',
+        'origin_other' => 'Origine (autre)',
+        'assigned_user' => 'Assigné à',
+        'classify' => 'À classer',
+        'siret' => 'Siret',
+        'vat_intra' => 'TVA intra.',
+        'iban' => 'IBAN',
+        'bic' => 'BIC',
+        'business_provider' => 'Apporteur d\'affaires',
+        'business_sector' => 'Secteur',
+        'naf_code' => 'Code NAF',
+        'description' => 'Description',
+        'employees' => 'Effectif',
+        'payment_mode' => 'Mode de règlement',
+        'payment_validity' => 'Échéance de règlement',
+    ],
 
-    'button.edit_status' => 'Modifier la piste',
+    // Relatedlist
+    'relatedlist' => [
+        'contacts' => 'Contacts',
+        'opportunities' => 'Affaires',
+        'documents' => 'Documents',
+        'addresses' => 'Adresses',
+    ],
 
+    // Status
+    'status' => [
+        'new' => '1. Nouveau',
+        'contacted' => '2. Contacté',
+        'discovery' => '3. Découverte',
+        'qualified' => '4. Qualifié',
+        'disqualified' => '5. Disqualifié',
+    ],
+
+    // Type
+    'type' => [
+        'customer' => 'Client',
+        'prospect' => 'Prospect',
+        'lead' => 'Prospect ciblé',
+        'old_customer' => 'Ancien client',
+        'vendor' => 'Fournisseur',
+        'sub_contractor' => 'Sous-traitant',
+    ],
+
+    // Employees
+    'employees' => [
+        '2_or_less' => '- de 2 salariés',
+        '3_5' => '3-5 salariés',
+        '6_9' => '6-9 salariés',
+        '10_19' => '10-19 salariés',
+        '20_49' => '20-49 salariés',
+        '50_99' => '50-99 salariés',
+        '100_or_more' => '+ de 100 salariés',
+    ],
+
+    'filter' => [
+        'prospects' => 'Prospects',
+        'leads' => 'Prospects ciblés',
+        'customers' => 'Clients',
+    ],
+
+    'button' => [
+        'edit_status' => 'Modifier la piste',
+    ],
+
+    'title' => [
+        "mr" => 'M.',
+        "mr_mrs" => 'M. & Mme',
+        "ms" => 'Mme',
+        "mrs" => 'Mlle',
+        "dr" => 'Dr',
+        "prof" => 'Prof',
+        "mstr" => 'Maître',
+        "assocation" => 'Assocation',
+        "earl" => 'EARL',
+        "eurl" => 'EURL',
+        "sa" => 'SA',
+        "sarl" => 'SARL',
+        "sas" => 'SAS',
+        "sasu" => 'SASU',
+        "sci" => 'SCI',
+    ],
+
+    'category' => [
+        'collectivity' => 'Collectivité',
+        'individual' => 'Particulier',
+        'professional' => 'Professionel',
+    ],
+
+    'mode' => [
+        'all' => 'Tous',
+        'transfer' => 'Virement',
+        'check_transfer' => 'Chèque ou virement',
+        'check' => 'Chèque',
+        'cash' => 'Espèces',
+        'electronic' => 'Paiement électronique',
+        'withdrawal' => 'Prélèvement',
+        'bill_exchange' => 'Lettre de change',
+        'credit_card' => 'Carte bancaire',
+        'tip' => 'TIP',
+    ],
+
+    'validity' => [
+        'paid' => 'Acquitée',
+        '5_days' => '5 jours',
+        '15_days' => '15 jours',
+        '30_days' => '30 jours',
+        '45_days' => '45 jours',
+        '45_days_month_end' => '45 jours fin de mois',
+        '60_days' => '60 jours',
+        'month_end' => 'Fin de mois',
+        'month_end_5' => 'Fin de mois le 5',
+        '30_days_month_end' => '30 jours fin de mois',
+        '60_days_month_end' => '60 jours fin de mois',
+    ]
 ];

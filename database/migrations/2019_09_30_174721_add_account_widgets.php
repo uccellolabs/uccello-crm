@@ -29,6 +29,10 @@ class AddAccountWidgets extends Migration
         // Contacts
         $relatedlist = Relatedlist::where('module_id', $module->id)->where('related_module_id', Module::where('name', 'contact')->first()->id)->first();
         $module->widgets()->attach($relatedlistWidget->id, ['sequence' => 2, 'data' => json_encode(['id' => $relatedlist->id])]);
+
+        // Calendar
+        $calendarListWidget = Widget::where('label', 'widget.calendar_list')->first();
+        $module->widgets()->attach($calendarListWidget->id, ['sequence' => 3, 'data' => null]);
     }
 
     /**

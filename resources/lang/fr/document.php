@@ -2,15 +2,21 @@
 
 return [
     'document' => 'Documents',
-    'single.document' => 'Document',
-    'tab.main' => 'Détails',
-    'block.general' => 'Informations générales',
-    'field.name' => 'Nom',
-    'field.file' => 'Fichier',
-    'field.is_public' => 'Accessible hors CRM',
-    'block.properties' => 'Propriétés',
-    'field.origin_name' => 'Nom d\'origine',
-    'field.content_type' => 'Type fichier',
-    'field.size' => 'Taille',
-    'field.path' => 'Chemin',
+    'tab' => [
+        'main' => 'Détails',
+    ],
+    'block' => [
+        'general' => 'Informations générales',
+    ],
+    'field' => [
+        'name' => 'Nom',
+        'file' => 'Fichier',
+        'is_public' => 'Accessible hors CRM',
+        'properties' => 'Propriétés',
+        'origin_name' => 'Nom d\'origine',
+        'content_type' => 'Type fichier',
+        'size' => 'Taille',
+        'path' => 'Chemin',
+        'assigned_user' => 'Assigné à',
+    ],
 ];

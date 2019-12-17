@@ -2,11 +2,11 @@
 
 namespace Uccello\Crm\Models;
 
+use Gzero\EloquentTree\Model\Tree;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Uccello\Core\Database\Eloquent\Model;
 use Uccello\Core\Support\Traits\UccelloModule;
 
-class Product extends Model
+class Product extends Tree
 {
     use SoftDeletes;
     use UccelloModule;
@@ -16,7 +16,7 @@ class Product extends Model
      *
      * @var string
      */
-    protected $table = 'products';
+    protected $table = 'crm_products';
 
     /**
      * The attributes that should be mutated to dates.
@@ -31,12 +31,61 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'vtiger_id'
+        'name',
+        'brand',
+        'serial_number',
+        'family_id',
+        'parent_id',
+        'vendor_id',
+        'vendor_reference',
+        'selling_price',
+        'purchase_price',
+        'margin',
+        'delivery_costs',
+        'seller_commission',
+        'stock_quantity',
+        'unit',
+        'domain_id',
     ];
 
-    protected function initTablePrefix()
+    public static function boot()
     {
-        $this->tablePrefix = 'crm_';
+        parent::boot();
+
+        // Linck to parent record
+        static::created(function ($model) {
+            static::linkToParentRecord($model);
+        });
+
+        static::updated(function ($model) {
+            static::linkToParentRecord($model);
+        });
+    }
+
+    public static function linkToParentRecord($model)
+    {
+        // Set parent record
+        $parentRecord = Product::find(request('parent'));
+        if (!is_null($parentRecord)) {
+            with($model)->setChildOf($parentRecord);
+        }
+        // Remove parent domain
+        else {
+            with($model)->setAsRoot();
+        }
+    }
+
+    /**
+     * Check if node is root
+     * This function check foreign key field
+     *
+     * @return bool
+     */
+    public function isRoot()
+    {
+        // return (empty($this->{$this->getTreeColumn('parent')})) ? true : false;
+        return $this->{$this->getTreeColumn('path')} === $this->getKey() . '/'
+                && $this->{$this->getTreeColumn('level')} === 0;
     }
 
     public function family()

@@ -54,37 +54,34 @@ class CreateAccountModule extends Migration
     {
         Schema::create($this->tablePrefix . 'accounts', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title')->nullable();
             $table->string('name');
-            $table->string('sign')->nullable();
+            $table->string('code')->nullable();
             $table->string('type');
+            $table->string('category')->nullable();
             $table->string('lead_status')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('fax')->nullable();
             $table->string('website')->nullable();
-            $table->string('ape_code')->nullable();
-            $table->string('siret')->nullable();
             $table->string('origin')->nullable();
-            $table->string('origin_other')->nullable();
             $table->string('business_sector')->nullable();
-            $table->string('classify')->nullable();
-            $table->string('billing_lane')->nullable();
-            $table->string('billing_postal_code')->nullable();
-            $table->string('billing_city')->nullable();
-            $table->unsignedInteger('billing_country_id')->nullable();
-            $table->string('shipping_lane')->nullable();
-            $table->string('shipping_postal_code')->nullable();
-            $table->string('shipping_city')->nullable();
-            $table->unsignedInteger('shipping_country_id')->nullable();
-            $table->string('assigned_user_id')->nullable();
-            $table->text('employees_address')->nullable();
-            $table->text('employees_france')->nullable();
+            $table->string('naf_code')->nullable();
+            $table->string('siret')->nullable();
+            $table->string('vat_intra')->nullable();
+            $table->string('bic')->nullable();
+            $table->string('iban')->nullable();
+            $table->string('payment_mode')->nullable();
+            $table->string('payment_validity')->nullable();
+            $table->text('employees')->nullable();
             $table->text('description')->nullable();
+            $table->uuid('assigned_user_id')->nullable();
             $table->unsignedInteger('domain_id');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
+            // $table->foreign('assigned_user_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'entities');
         });
     }
 
@@ -111,58 +108,83 @@ class CreateAccountModule extends Migration
     protected function createTabsBlocksFields($module)
     {
         // Tab tab.main
-        $tab = new Tab([
+        $tab = Tab::create([
             'module_id' => $module->id,
             'label' => 'tab.main',
             'icon' => null,
-            'sequence' => 0,
+            'sequence' => $module->tabs()->count(),
             'data' => null
         ]);
-        $tab->save();
 
         // Block block.general
-        $block = new Block([
+        $block = Block::create([
             'module_id' => $module->id,
             'tab_id' => $tab->id,
             'label' => 'block.general',
             'icon' => 'info',
-            'sequence' => 0,
+            'sequence' => $tab->blocks()->count(),
             'data' => null
         ]);
-        $block->save();
+
+        // Field title
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'title',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                "choices" => [
+                    "title.mr",
+                    "title.mr_mrs",
+                    "title.ms",
+                    "title.mrs",
+                    "title.dr",
+                    "title.prof",
+                    "title.mstr",
+                    "title.assocation",
+                    "title.earl",
+                    "title.eurl",
+                    "title.sa",
+                    "title.sarl",
+                    "title.sas",
+                    "title.sasu",
+                    "title.sci",
+                ]
+             ]
+        ]);
 
         // Field name
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'name',
             'uitype_id' => uitype('text')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 0,
+            'sequence' => $block->fields()->count(),
             'data' => [ "rules" => "required" ]
         ]);
-        $field->save();
 
-        // Field sign
-        $field = new Field([
+        // Field code
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'sign',
+            'name' => 'code',
             'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 1,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
             'data' => null
         ]);
-        $field->save();
 
         // Field type
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'type',
             'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 2,
+            'sequence' => $block->fields()->count(),
             'data' => [
                 "rules" => "required",
                 "choices" => [
@@ -170,21 +192,21 @@ class CreateAccountModule extends Migration
                     "type.prospect",
                     "type.lead",
                     "type.old_customer",
-                    "type.vendor"
+                    "type.vendor",
+                    "type.sub_contractor",
                 ],
-                // "default" => "type.customer"
+                "default" => "type.customer",
             ]
         ]);
-        $field->save();
 
         // Field lead_status
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'lead_status',
             'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('hidden')->id,
-            'sequence' => 3,
+            'sequence' => $block->fields()->count(),
             'data' => [
                 "rules" => "required",
                 "choices" => [
@@ -196,30 +218,66 @@ class CreateAccountModule extends Migration
                 ]
             ]
         ]);
-        $field->save();
+
+        // Field category
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'category',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                "choices" => [
+                    "category.collectivity",
+                    "category.individual",
+                    "category.professional",
+                ],
+                "default" => "category.professional",
+            ]
+        ]);
 
         // Field assigned_user
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'assigned_user',
             'uitype_id' => uitype('assigned_user')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 4,
+            'sequence' => $block->fields()->count(),
             'data' => json_decode('{"rules":"required"}')
         ]);
-        $field->save();
+
+        // Field employees
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'employees',
+            'uitype_id' => uitype('select')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                'choices' => [
+                    'employees.2_or_less',
+                    'employees.3_5',
+                    'employees.6_9',
+                    'employees.10_19',
+                    'employees.20_49',
+                    'employees.50_99',
+                    'employees.100_or_more'
+                ]
+            ]
+        ]);
 
         // Field business_sector
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'business_sector',
             'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 5,
+            'sequence' => $block->fields()->count(),
             'data' => [
-                "rules" => "required",
                 "choices" => [
                     "Adm. publique",
                     "Commerce",
@@ -236,299 +294,224 @@ class CreateAccountModule extends Migration
                 ]
             ]
         ]);
-        $field->save();
-
-        // Field phone
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'phone',
-            'uitype_id' => uitype('phone')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 6,
-            'data' => null
-        ]);
-        $field->save();
 
         // Field origin
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'origin',
             'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 7,
+            'sequence' => $block->fields()->count(),
             'data' => [
-                "rules" => "required",
                 "choices" => [
-                    "Kompass",
-                    "BNI",
-                    "Pro Contact",
                     "Réseau Professionnel",
                     "Relation",
                     "Autre"
                 ]
             ]
         ]);
-        $field->save();
-
-        // Field origin_other
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'origin_other',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 8,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field email
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'email',
-            'uitype_id' => uitype('email')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 9,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field website
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'website',
-            'uitype_id' => uitype('url')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 10,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field ape_code
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'ape_code',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 11,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field siret
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'siret',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 12,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field employees_address
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'employees_address',
-            'uitype_id' => uitype('select')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 13,
-            'data' => [
-                'choices' => [
-                    'employees.2_or_less',
-                    'employees.3_5',
-                    'employees.6_9',
-                    'employees.10_19',
-                    'employees.20_49',
-                    'employees.50_99',
-                    'employees.100_or_more'
-                ]
-            ]
-        ]);
-        $field->save();
-
-        // Field employees_france
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'employees_france',
-            'uitype_id' => uitype('select')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 14,
-            'data' => [
-                'choices' => [
-                    'employees.2_or_less',
-                    'employees.3_5',
-                    'employees.6_9',
-                    'employees.10_19',
-                    'employees.20_49',
-                    'employees.50_99',
-                    'employees.100_or_more'
-                ]
-            ]
-        ]);
-        $field->save();
-
-        // Field fax
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'fax',
-            'uitype_id' => uitype('phone')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 15,
-            'data' => null
-        ]);
-        $field->save();
 
         // Field description
-        $field = new Field([
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
             'name' => 'description',
             'uitype_id' => uitype('textarea')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 16,
-            'data' => json_decode('{"large":false}')
+            'sequence' => $block->fields()->count(),
+            'data' => json_decode('{"large":true}')
         ]);
-        $field->save();
 
-        // Field classify
-        $field = new Field([
+        // Field created_at
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'classify',
+            'name' => 'created_at',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field updated_at
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'updated_at',
+            'uitype_id' => uitype('date')->id,
+            'displaytype_id' => displaytype('detail')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Block block.contact
+        $block = Block::create([
+            'module_id' => $module->id,
+            'tab_id' => $tab->id,
+            'label' => 'block.contact',
+            'icon' => 'phone',
+            'sequence' => $tab->blocks()->count(),
+            'data' => null
+        ]);
+
+        // Field phone
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'phone',
+            'uitype_id' => uitype('phone')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field fax
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'fax',
+            'uitype_id' => uitype('phone')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field email
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'email',
+            'uitype_id' => uitype('email')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field website
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'website',
+            'uitype_id' => uitype('url')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Block block.administrative
+        $block = Block::create([
+            'module_id' => $module->id,
+            'tab_id' => $tab->id,
+            'label' => 'block.administrative',
+            'icon' => 'account_balance',
+            'sequence' => $tab->blocks()->count(),
+            'data' => null
+        ]);
+
+        // Field siret
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'siret',
+            'uitype_id' => uitype('text')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field vat_intra
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'vat_intra',
+            'uitype_id' => uitype('text')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field naf_code
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'naf_code',
+            'uitype_id' => uitype('text')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field iban
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'iban',
+            'uitype_id' => uitype('text')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field bic
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'bic',
+            'uitype_id' => uitype('text')->id,
+            'displaytype_id' => displaytype('everywhere')->id,
+            'sequence' => $block->fields()->count(),
+            'data' => null
+        ]);
+
+        // Field payment_mode
+        Field::create([
+            'module_id' => $module->id,
+            'block_id' => $block->id,
+            'name' => 'payment_mode',
             'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 17,
-            'data' => json_decode('{"choices":["Compte non exploitable","Pas intéressé / Pas besoin","Refus de communiquer"]}')
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                "choices" => [
+                    "mode.all",
+                    "mode.transfer",
+                    "mode.check_transfer",
+                    "mode.check",
+                    "mode.cash",
+                    "mode.electronic",
+                    "mode.withdrawal",
+                    "mode.bill_exchange",
+                    "mode.credit_card",
+                    "mode.tip",
+                ]
+            ]
         ]);
-        $field->save();
 
-        // Block block.billing_address
-        $block = new Block([
-            'module_id' => $module->id,
-            'tab_id' => $tab->id,
-            'label' => 'block.billing_address',
-            'icon' => 'location_on',
-            'sequence' => 1,
-            'data' => null
-        ]);
-        $block->save();
-
-        // Field billing_lane
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'billing_lane',
-            'uitype_id' => uitype('textarea')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 0,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field billing_postal_code
-        $field = new Field([
+        // Field payment_validity
+        Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'billing_postal_code',
-            'uitype_id' => uitype('text')->id,
+            'name' => 'payment_validity',
+            'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 1,
-            'data' => null
+            'sequence' => $block->fields()->count(),
+            'data' => [
+                "choices" => [
+                    "validity.paid",
+                    "validity.5_days",
+                    "validity.15_days",
+                    "validity.30_days",
+                    "validity.45_days",
+                    "validity.45_days_month_end",
+                    "validity.60_days",
+                    "validity.month_end",
+                    "validity.month_end_5",
+                    "validity.30_days_month_end",
+                    "validity.60_days_month_end",
+                ]
+            ]
         ]);
-        $field->save();
-
-        // Field billing_city
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'billing_city',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 2,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field billing_country
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'billing_country',
-            'uitype_id' => uitype('entity')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 3,
-            'data' => [ 'module' => 'country' ]
-        ]);
-        $field->save();
-
-        // Block block.shipping_address
-        $block = new Block([
-            'module_id' => $module->id,
-            'tab_id' => $tab->id,
-            'label' => 'block.shipping_address',
-            'icon' => 'location_on',
-            'sequence' => 2,
-            'data' => null
-        ]);
-        $block->save();
-
-        // Field shipping_lane
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'shipping_lane',
-            'uitype_id' => uitype('textarea')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 0,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field shipping_postal_code
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'shipping_postal_code',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 1,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field shipping_city
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'shipping_city',
-            'uitype_id' => uitype('text')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 2,
-            'data' => null
-        ]);
-        $field->save();
-
-        // Field shipping_country
-        $field = new Field([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'shipping_country',
-            'uitype_id' => uitype('entity')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => 3,
-            'data' => [ 'module' => 'country' ]
-        ]);
-        $field->save();
     }
 
     protected function createFilters($module)
@@ -540,7 +523,7 @@ class CreateAccountModule extends Migration
             'user_id' => null,
             'name' => 'filter.all',
             'type' => 'list',
-            'columns' => [ 'name', 'type', 'assigned_user', 'origin', 'billing_lane', 'billing_postal_code', 'billing_city' ],
+            'columns' => ['title', 'name', 'code', 'type', 'assigned_user', 'origin' ],
             'conditions' => null,
             'order' => null,
             'is_default' => true,
@@ -554,7 +537,7 @@ class CreateAccountModule extends Migration
             'user_id' => null,
             'name' => 'filter.customers',
             'type' => 'list',
-            'columns' => [ 'name', 'type', 'assigned_user', 'origin', 'billing_lane', 'billing_postal_code', 'billing_city' ],
+            'columns' => ['title', 'name', 'code', 'type', 'assigned_user', 'origin' ],
             'conditions' => json_decode('{"search":{"type":"type.customer"}}'),
             'order' => null,
             'is_default' => true,
@@ -568,7 +551,7 @@ class CreateAccountModule extends Migration
             'user_id' => null,
             'name' => 'filter.leads',
             'type' => 'list',
-            'columns' => [ 'name', 'type', 'assigned_user', 'origin', 'billing_lane', 'billing_postal_code', 'billing_city' ],
+            'columns' => ['title', 'name', 'code', 'type', 'assigned_user', 'origin' ],
             'conditions' => json_decode('{"search":{"type":"type.lead"}}'),
             'order' => null,
             'is_default' => true,
@@ -582,7 +565,7 @@ class CreateAccountModule extends Migration
             'user_id' => null,
             'name' => 'filter.prospects',
             'type' => 'list',
-            'columns' => [ 'name', 'type', 'assigned_user', 'origin', 'billing_lane', 'billing_postal_code', 'billing_city' ],
+            'columns' => ['title', 'name', 'code', 'type', 'assigned_user', 'origin' ],
             'conditions' => json_decode('{"search":{"type":"type.prospect"}}'),
             'order' => null,
             'is_default' => true,
@@ -594,19 +577,6 @@ class CreateAccountModule extends Migration
 
     protected function createRelatedLists($module)
     {
-        $contactModule = Module::where('name', 'contact')->first();
-        Relatedlist::create([
-            'module_id' => $module->id,
-            'related_module_id' => $contactModule->id,
-            'related_field_id' => $contactModule->fields()->where('name', 'account')->first()->id,
-            'tab_id' => null,
-            'label' => 'relatedlist.contacts',
-            'type' => 'n-1',
-            'method' => 'getDependentList',
-            'sequence' => 0,
-            'data' => [ 'actions' => [ 'add' ], 'add_tab' => false ]
-        ]);
-
         $documentModule = Module::where('name', 'document')->first();
         Relatedlist::create([
             'module_id' => $module->id,

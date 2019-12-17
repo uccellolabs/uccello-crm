@@ -34,7 +34,29 @@ class Account extends Model implements Searchable
      * @var array
      */
     protected $fillable = [
-        'vtiger_id'
+        'title',
+        'name',
+        'code',
+        'type',
+        'lead_status',
+        'email',
+        'phone',
+        'fax',
+        'website',
+        'origin',
+        'origin_other',
+        'business_sector',
+        'naf_code',
+        'siret',
+        'vat_intra',
+        'bic',
+        'iban',
+        'payment_mode',
+        'payment_validity',
+        'employees',
+        'description',
+        'assigned_user_id',
+        'domain_id',
     ];
 
     public $searchableType = 'account';
@@ -87,11 +109,6 @@ class Account extends Model implements Searchable
         }
     }
 
-    public function assigned_user()
-    {
-        return $this->belongsTo(\Uccello\Core\Models\User::class);
-    }
-
     public function contacts()
     {
         return $this->hasMany(Contact::class);
@@ -102,24 +119,9 @@ class Account extends Model implements Searchable
         return $this->hasMany(Opportunity::class);
     }
 
-    public function pools()
+    public function addresses()
     {
-        return $this->hasMany(Pool::class);
-    }
-
-    public function tasks()
-    {
-        return $this->hasMany(Task::class);
-    }
-
-    public function billing_country()
-    {
-        return $this->belongsTo(Country::class);
-    }
-
-    public function shipping_country()
-    {
-        return $this->belongsTo(Country::class);
+        return $this->hasMany(Address::class);
     }
 
     public function documents()
