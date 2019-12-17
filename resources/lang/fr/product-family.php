@@ -14,4 +14,7 @@ return [
         'color' => 'Couleur',
         'assigned_user' => 'Assigné à',
     ],
+    'relatedlist' => [
+        'products' => 'Produits',
+    ]
 ];

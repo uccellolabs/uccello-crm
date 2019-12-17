@@ -378,8 +378,20 @@ class CreateProductModule extends Migration
 
     protected function createRelatedLists($module)
     {
-        $documentModule = Module::where('name', 'document')->first();
+        $productFamilyModule = Module::where('name', 'product-family')->first();
+        Relatedlist::create([
+            'module_id' => $productFamilyModule->id,
+            'related_module_id' => $module->id,
+            'related_field_id' => $module->fields()->where('name', 'product_family')->first()->id,
+            'tab_id' => null,
+            'label' => 'relatedlist.products',
+            'type' => 'n-1',
+            'method' => 'getDependentList',
+            'sequence' => 0,
+            'data' => [ 'actions' => [ 'add' ] ]
+        ]);
 
+        $documentModule = Module::where('name', 'document')->first();
         Relatedlist::create([
             'module_id' => $module->id,
             'related_module_id' => $documentModule->id,
