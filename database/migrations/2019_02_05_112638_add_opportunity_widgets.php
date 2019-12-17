@@ -17,7 +17,7 @@ class AddOpportunityWidgets extends Migration
 
         // Main fields
         $fieldsWidget = Widget::where('label', 'widget.main_fields')->first();
-        $module->widgets()->attach($fieldsWidget->id, ['sequence' => 0, 'data' => json_encode(['fields' => ['name', 'account', 'type', 'origin', 'phase', 'product', 'amount', 'contract_end_date', 'closing_date', 'description', 'assigned_user']])]);
+        $module->widgets()->attach($fieldsWidget->id, ['sequence' => 0, 'data' => json_encode(['fields' => ['name', 'account', 'type', 'origin', 'phase', 'product', 'amount', 'closing_date', 'description', 'assigned_user']])]);
 
         // Status
             // $statusWidget = Widget::where('label', 'widget.status')->first();

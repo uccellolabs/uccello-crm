@@ -42,7 +42,6 @@ class Opportunity extends Model implements Searchable
         'business_provider_id',
         'phase',
         'step',
-        'contract_end_date',
         'closing_date',
         'assigned_user_id',
         'amount',
@@ -86,17 +85,19 @@ class Opportunity extends Model implements Searchable
     public static function changeOpportunityPhaseAndStep($model)
     {
         // Change step according to phase
-        if ($model->phase === 'phase.5.won' && is_null($model->step)) {
+        if ($model->phase === 'phase.5_won' && is_null($model->step)) {
             $model->step = 'step.won';
-        } elseif ($model->phase === 'phase.6.lost' && is_null($model->step)) {
+        } elseif ($model->phase === 'phase.6_lost' && is_null($model->step)) {
             $model->step = 'step.lost';
+        } elseif (empty($model->step)) {
+            $model->step = 'step.qualification';
         }
         // Change phase according to step
-        elseif ($model->step === 'step.won' && $model->phase !== 'phase.5.won') {
-            $model->phase = 'phase.5.won';
+        elseif ($model->step === 'step.won' && $model->phase !== 'phase.5_won') {
+            $model->phase = 'phase.5_won';
         }
-        elseif ($model->step === 'step.lost' && $model->phase !== 'phase.6.lost') {
-            $model->phase = 'phase.6.lost';
+        elseif ($model->step === 'step.lost' && $model->phase !== 'phase.6_lost') {
+            $model->phase = 'phase.6_lost';
         }
 
         // Add account name

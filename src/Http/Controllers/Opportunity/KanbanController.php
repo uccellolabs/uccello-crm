@@ -101,7 +101,7 @@ class KanbanController extends Controller
 
         if (request('closing_date') === 'month') {
             $opportunities->where(function ($query) use($closingDateStart, $closingDateEnd, $phase) {
-                if (!in_array($phase, [ 'phase.5.won', 'phase.6.lost' ])) {
+                if (!in_array($phase, [ 'phase.5_won', 'phase.6_lost' ])) {
                     $query->whereBetween('closing_date', [ $closingDateStart, $closingDateEnd ])
                         ->orWhereBetween('closing_date', [ $closingDateStart->copy()->subMonth(), $closingDateEnd->copy()->subMonth() ]);
                 } else {

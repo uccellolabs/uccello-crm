@@ -30,7 +30,6 @@ return [
         'vat_intra' => 'TVA intra.',
         'iban' => 'IBAN',
         'bic' => 'BIC',
-        'business_provider' => 'Apporteur d\'affaires',
         'business_sector' => 'Secteur',
         'naf_code' => 'Code NAF',
         'description' => 'Description',
@@ -64,6 +63,7 @@ return [
         'old_customer' => 'Ancien client',
         'vendor' => 'Fournisseur',
         'sub_contractor' => 'Sous-traitant',
+        'business_provider' => 'Apporteur d\'affaire',
     ],
 
     // Employees

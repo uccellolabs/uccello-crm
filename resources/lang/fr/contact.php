@@ -15,7 +15,7 @@ return [
         'email' => 'Email',
         'phone' => 'Téléphone',
         'mobile' => 'Mobile',
-        'account' => 'Raison sociale',
+        'account' => 'Compte',
         'assigned_user' => 'Assigné à',
         'function' => 'Fonction',
         'service' => 'Service',

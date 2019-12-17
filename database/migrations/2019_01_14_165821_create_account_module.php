@@ -194,6 +194,7 @@ class CreateAccountModule extends Migration
                     "type.old_customer",
                     "type.vendor",
                     "type.sub_contractor",
+                    "type.business_provider",
                 ],
                 "default" => "type.customer",
             ]

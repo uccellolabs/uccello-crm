@@ -1,9 +1,6 @@
 <div class="row" style="margin-bottom: 0">
-        <div class="col s6">
+        <div class="col s12">
             <small data-tooltip="{{ trans('opportunity.kanban.item.closing_date') }}" data-position="top">{{ !empty($opportunity->closing_date) ? (new \Carbon\Carbon($opportunity->closing_date))->format('d/m/Y') : '' }}</small>
-        </div>
-        <div class="col s6 right-align">
-            <small data-tooltip="{{ trans('opportunity.kanban.item.contract_end_date') }}" data-position="top">{{ !empty($opportunity->contract_end_date) ? (new \Carbon\Carbon($opportunity->contract_end_date))->format('d/m/Y') : '' }}</small>
         </div>
         <div class="col s12">
             <a href="#" class="black-text"><strong >{{ $opportunity->recordLabel }}</strong></a><br>
@@ -11,7 +8,7 @@
             {{ ucrecord($opportunity->assigned_user_id)->recordLabel ?? '' }}
         </div>
         <div class="col s7">
-            <small class="green-text step">{{ trans('opportunity.'.$opportunity->step) }}</small>
+            <small class="green-text step">{{ uctrans($opportunity->step, $module) }}</small>
         </div>
         <div class="col s5 right-align">
             <span class="red-text amount" data-amount="{{ $opportunity->amount }}">{{ number_format($opportunity->amount, 0, ',', ' ') }} €</span>

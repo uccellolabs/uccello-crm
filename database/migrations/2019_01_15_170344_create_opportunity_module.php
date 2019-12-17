@@ -63,7 +63,6 @@ class CreateOpportunityModule extends Migration
             $table->unsignedInteger('business_provider_id')->nullable();
             $table->string('phase')->nullable();
             $table->string('step')->default('step.new')->nullable();
-            $table->date('contract_end_date')->nullable();
             $table->date('closing_date')->nullable();
             $table->decimal('amount', 13, 2)->nullable();
             $table->text('description')->nullable();
@@ -74,7 +73,7 @@ class CreateOpportunityModule extends Migration
 
             $table->foreign('domain_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'domains');
             $table->foreign('account_id')->references('id')->on($this->tablePrefix.'accounts');
-            $table->foreign('business_provider_id')->references('id')->on($this->tablePrefix.'business_providers');
+            $table->foreign('business_provider_id')->references('id')->on($this->tablePrefix.'accounts');
             // $table->foreign('assigned_user_id')->references('id')->on(env('UCCELLO_TABLE_PREFIX', 'uccello_').'entities');
         });
     }
@@ -175,15 +174,25 @@ class CreateOpportunityModule extends Migration
             'data' => json_decode('{"rules":"required"}')
         ]);
 
-        // Field contract_end_date
+        // Field phase
         Field::create([
             'module_id' => $module->id,
             'block_id' => $block->id,
-            'name' => 'contract_end_date',
-            'uitype_id' => uitype('date')->id,
+            'name' => 'phase',
+            'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
-            'data' => null
+            'data' => [
+                'choices' => [
+                    'phase.1_new',
+                    'phase.2_opportunity_hight',
+                    'phase.3_opportunity_low',
+                    'phase.4_project',
+                    'phase.5_won',
+                    'phase.6_lost',
+                ],
+                'default' => 'phase.1_new'
+            ]
         ]);
 
         // Field closing_date
@@ -206,7 +215,6 @@ class CreateOpportunityModule extends Migration
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
             'data' => [
-                "rules" => "required",
                 "choices" => [
                     "Kompass",
                     "BNI",
@@ -227,7 +235,7 @@ class CreateOpportunityModule extends Migration
             'uitype_id' => uitype('entity')->id,
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
-            'data' => [ 'module' => 'business-provider']
+            'data' => [ 'module' => 'account']
         ]);
 
         // Field type
@@ -239,7 +247,6 @@ class CreateOpportunityModule extends Migration
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
             'data' => [
-                "rules" => "required",
                 "choices" => [
                     "Bureautique",
                     "Informatique",
@@ -261,17 +268,6 @@ class CreateOpportunityModule extends Migration
             'data' => null
         ]);
 
-        // Field phase
-        Field::create([
-            'module_id' => $module->id,
-            'block_id' => $block->id,
-            'name' => 'phase',
-            'uitype_id' => uitype('select')->id,
-            'displaytype_id' => displaytype('everywhere')->id,
-            'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"rules":"required", "choices":["phase.1.outlook","phase.2.oppo_hight","phase.3.oppo_low","phase.4.project","phase.5.won", "phase.6.lost"]}')
-        ]);
-
         // Field step
         Field::create([
             'module_id' => $module->id,
@@ -280,7 +276,7 @@ class CreateOpportunityModule extends Migration
             'uitype_id' => uitype('select')->id,
             'displaytype_id' => displaytype('hidden')->id,
             'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"rules":"required", "choices":["step.qualification", "step.study", "step.proposal", "step.negociation", "step.won", "step.lost"], "default":"step.qualification"}')
+            'data' => json_decode('{"choices":["step.qualification", "step.study", "step.proposal", "step.negociation", "step.won", "step.lost"], "default":"step.qualification"}')
         ]);
 
         // Field description
@@ -291,7 +287,7 @@ class CreateOpportunityModule extends Migration
             'uitype_id' => uitype('textarea')->id,
             'displaytype_id' => displaytype('everywhere')->id,
             'sequence' => $block->fields()->count(),
-            'data' => json_decode('{"large":false}')
+            'data' => json_decode('{"large":true}')
         ]);
 
         // Field created_at
@@ -326,7 +322,7 @@ class CreateOpportunityModule extends Migration
             'user_id' => null,
             'name' => 'filter.all',
             'type' => 'list',
-            'columns' => [ 'name', 'account', 'amount', 'phase', 'contract_end_date', 'closing_date', 'assigned_user', 'origin' ],
+            'columns' => [ 'name', 'account', 'amount', 'phase', 'closing_date', 'assigned_user', 'origin' ],
             'conditions' => null,
             'order' => [ 'phase' => 'asc' ],
             'is_default' => true,

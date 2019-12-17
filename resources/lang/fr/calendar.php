@@ -2,7 +2,7 @@
 
 return [
     'field' => [
-        'account' => 'Raison sociale',
+        'account' => 'Compte',
         'related_record' => 'Contacts et Affaires',
     ]
 ];

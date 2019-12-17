@@ -382,7 +382,7 @@ class CreateProductModule extends Migration
         Relatedlist::create([
             'module_id' => $productFamilyModule->id,
             'related_module_id' => $module->id,
-            'related_field_id' => $module->fields()->where('name', 'product_family')->first()->id,
+            'related_field_id' => $module->fields()->where('name', 'family')->first()->id,
             'tab_id' => null,
             'label' => 'relatedlist.products',
             'type' => 'n-1',
