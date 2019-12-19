@@ -73,7 +73,7 @@ class CreateAccountModule extends Migration
             $table->string('iban')->nullable();
             $table->string('payment_mode')->nullable();
             $table->string('payment_validity')->nullable();
-            $table->text('employees')->nullable();
+            $table->string('employees')->nullable();
             $table->text('description')->nullable();
             $table->uuid('assigned_user_id')->nullable();
             $table->unsignedInteger('domain_id');
