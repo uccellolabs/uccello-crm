@@ -575,6 +575,61 @@ class CreateAccountModule extends Migration
         ]);
         $filter->save();
 
+        $filter = new Filter([
+            'module_id' => $module->id,
+            'domain_id' => null,
+            'user_id' => null,
+            'name' => 'filter.old_customers',
+            'type' => 'list',
+            'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
+            'conditions' => json_decode('{"search":{"type":"type.old_customer"}}'),
+            'order' => null,
+            'is_default' => false,
+            'is_public' => false
+        ]);
+        $filter->save();
+
+        $filter = new Filter([
+            'module_id' => $module->id,
+            'domain_id' => null,
+            'user_id' => null,
+            'name' => 'filter.vendors',
+            'type' => 'list',
+            'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
+            'conditions' => json_decode('{"search":{"type":"type.vendor"}}'),
+            'order' => null,
+            'is_default' => false,
+            'is_public' => false
+        ]);
+        $filter->save();
+
+        $filter = new Filter([
+            'module_id' => $module->id,
+            'domain_id' => null,
+            'user_id' => null,
+            'name' => 'filter.sub_contractors',
+            'type' => 'list',
+            'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
+            'conditions' => json_decode('{"search":{"type":"type.sub_contractor"}}'),
+            'order' => null,
+            'is_default' => false,
+            'is_public' => false
+        ]);
+        $filter->save();
+
+        $filter = new Filter([
+            'module_id' => $module->id,
+            'domain_id' => null,
+            'user_id' => null,
+            'name' => 'filter.business_providers',
+            'type' => 'list',
+            'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
+            'conditions' => json_decode('{"search":{"type":"type.business_provider"}}'),
+            'order' => null,
+            'is_default' => false,
+            'is_public' => false
+        ]);
+        $filter->save();
     }
 
     protected function createRelatedLists($module)

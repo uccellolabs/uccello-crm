@@ -63,7 +63,7 @@ return [
         'old_customer' => 'Ancien client',
         'vendor' => 'Fournisseur',
         'sub_contractor' => 'Sous-traitant',
-        'business_provider' => 'Apporteur d\'affaire',
+        'business_provider' => 'Apporteur d\'affaires',
     ],
 
     // Employees
@@ -81,6 +81,10 @@ return [
         'prospects' => 'Prospects',
         'leads' => 'Prospects ciblés',
         'customers' => 'Clients',
+        'old_customers' => 'Anciens clients',
+        'vendors' => 'Fournisseurs',
+        'sub_contractors' => 'Sous-traitants',
+        'business_providers' => 'Apporteurs d\'affaires',
     ],
 
     'button' => [
