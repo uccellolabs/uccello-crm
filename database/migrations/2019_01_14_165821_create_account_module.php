@@ -542,7 +542,7 @@ class CreateAccountModule extends Migration
             'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
             'conditions' => json_decode('{"search":{"type":"type.customer"}}'),
             'order' => null,
-            'is_default' => true,
+            'is_default' => false,
             'is_public' => false
         ]);
         $filter->save();
@@ -556,7 +556,7 @@ class CreateAccountModule extends Migration
             'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
             'conditions' => json_decode('{"search":{"type":"type.lead"}}'),
             'order' => null,
-            'is_default' => true,
+            'is_default' => false,
             'is_public' => false
         ]);
         $filter->save();
@@ -570,7 +570,7 @@ class CreateAccountModule extends Migration
             'columns' => ['title', 'name', 'code', 'type', 'category', 'email', 'phone' ],
             'conditions' => json_decode('{"search":{"type":"type.prospect"}}'),
             'order' => null,
-            'is_default' => true,
+            'is_default' => false,
             'is_public' => false
         ]);
         $filter->save();
