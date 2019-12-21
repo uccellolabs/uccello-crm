@@ -18,7 +18,7 @@ class AddAccountWidgets extends Migration
 
         // Main fields
         $fieldsWidget = Widget::where('label', 'widget.main_fields')->first();
-        $module->widgets()->attach($fieldsWidget->id, ['sequence' => 0, 'data' => json_encode(['fields' => ['name', 'type', 'assigned_user', 'origin', 'billing_lane', 'billing_postal_code', 'billing_city']])]);
+        $module->widgets()->attach($fieldsWidget->id, ['sequence' => 0, 'data' => json_encode(['fields' => ['name', 'type', 'email', 'phone', 'assigned_user']])]);
 
         $relatedlistWidget = Widget::where('label', 'widget.relatedlist')->first();
 
