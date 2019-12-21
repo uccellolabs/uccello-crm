@@ -476,16 +476,16 @@ class CreateAccountModule extends Migration
             'sequence' => $block->fields()->count(),
             'data' => [
                 "choices" => [
-                    "mode.all",
-                    "mode.transfer",
-                    "mode.check_transfer",
-                    "mode.check",
-                    "mode.cash",
-                    "mode.electronic",
-                    "mode.withdrawal",
-                    "mode.bill_exchange",
-                    "mode.credit_card",
-                    "mode.tip",
+                    "payment_mode.all",
+                    "payment_mode.transfer",
+                    "payment_mode.check_transfer",
+                    "payment_mode.check",
+                    "payment_mode.cash",
+                    "payment_mode.electronic",
+                    "payment_mode.withdrawal",
+                    "payment_mode.bill_exchange",
+                    "payment_mode.credit_card",
+                    "payment_mode.tip",
                 ]
             ]
         ]);
@@ -500,17 +500,17 @@ class CreateAccountModule extends Migration
             'sequence' => $block->fields()->count(),
             'data' => [
                 "choices" => [
-                    "validity.paid",
-                    "validity.5_days",
-                    "validity.15_days",
-                    "validity.30_days",
-                    "validity.45_days",
-                    "validity.45_days_month_end",
-                    "validity.60_days",
-                    "validity.month_end",
-                    "validity.month_end_5",
-                    "validity.30_days_month_end",
-                    "validity.60_days_month_end",
+                    "payment_validity.paid",
+                    "payment_validity.5_days",
+                    "payment_validity.15_days",
+                    "payment_validity.30_days",
+                    "payment_validity.45_days",
+                    "payment_validity.45_days_month_end",
+                    "payment_validity.60_days",
+                    "payment_validity.month_end",
+                    "payment_validity.month_end_5",
+                    "payment_validity.30_days_month_end",
+                    "payment_validity.60_days_month_end",
                 ]
             ]
         ]);

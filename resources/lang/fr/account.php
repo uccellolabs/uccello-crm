@@ -115,7 +115,7 @@ return [
         'professional' => 'Professionel',
     ],
 
-    'mode' => [
+    'payment_mode' => [
         'all' => 'Tous',
         'transfer' => 'Virement',
         'check_transfer' => 'Chèque ou virement',
@@ -128,7 +128,7 @@ return [
         'tip' => 'TIP',
     ],
 
-    'validity' => [
+    'payment_validity' => [
         'paid' => 'Acquitée',
         '5_days' => '5 jours',
         '15_days' => '15 jours',
