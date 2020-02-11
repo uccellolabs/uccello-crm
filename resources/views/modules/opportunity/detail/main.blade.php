@@ -18,11 +18,7 @@
     </div>
 @endsection
 
-@section('content')
-
-    {{-- Tab list --}}
-    @include('uccello::modules.default.detail.tabs')
-
+@section('after-tabs')
     {{-- Status --}}
     <div class="progress" style="height: 33px">
         <?php $field = $module->fields()->where('name', 'step')->first(); ?>
@@ -45,42 +41,4 @@
             @endif
         @endforeach
     </div>
-
-    <div class="detail-blocks">
-        @section('default-tabs')
-            {{-- Summary --}}
-            @if ($widgets->count() > 0)
-            <div id="summary" @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $widgets->count() > 0) || $selectedTabId === 'summary')class="active"@endif>
-                @include('crm::modules.opportunity.detail.summary')
-            </div>
-            @endif
-
-            {{-- Tabs and blocks --}}
-            @foreach ($module->tabs as $i => $tab)
-            <div id="tab_{{ $tab->id }}" @if ((empty($selectedTabId) && empty($selectedRelatedlistId) && $i === 0 && $widgets->count() === 0) || $selectedTabId === $tab->id)class="active"@endif>
-                {{-- Blocks --}}
-                @include('uccello::modules.default.detail.blocks')
-
-                {{-- Related lists as blocks --}}
-                @include('uccello::modules.default.detail.relatedlists.as-blocks')
-
-                {{-- Other blocks --}}
-                @if ($i === 0)
-                    @yield('other-blocks')
-                @endif
-            </div>
-            @endforeach
-
-            {{-- Related lists as tabs --}}
-            @include('uccello::modules.default.detail.relatedlists.as-tabs')
-
-            {{-- Other tabs --}}
-            @yield('other-tabs')
-        @show
-    </div>
-
-    {{-- Action buttons --}}
-    @section('page-action-buttons')
-        @include('uccello::modules.default.detail.buttons')
-    @show
 @endsection
