@@ -79,6 +79,11 @@ class Contact extends Model implements Searchable
     {
         return $this->belongsTo(Account::class);
     }
+    
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
 
     public function country()
     {
