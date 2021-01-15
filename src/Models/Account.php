@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Uccello\Core\Database\Eloquent\Model;
+use Uccello\Core\Models\Domain;
 use Uccello\Core\Support\Traits\UccelloModule;
 use Uccello\Country\Models\Country;
 
@@ -127,6 +128,11 @@ class Account extends Model implements Searchable
     public function documents()
     {
         return $this->belongsToMany(Document::class, 'rl_accounts_documents')->withTimestamps();
+    }
+
+    public function domain()
+    {
+        return $this->belongsTo(Domain::class);
     }
 
     /**
