@@ -8,7 +8,7 @@ use Uccello\Core\Models\Domain;
 use Uccello\Core\Models\Module;
 use Uccello\Core\Models\Field;
 use Uccello\Crm\Models\Opportunity;
-use App\User;
+use App\Models\User;
 use Uccello\Crm\Models\Product;
 use Carbon\Carbon;
 use Uccello\Core\Models\Group;

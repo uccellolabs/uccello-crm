@@ -2,14 +2,17 @@
 
 namespace Uccello\Crm\Models;
 
-use Gzero\EloquentTree\Model\Tree;
+use App\Models\UccelloModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Uccello\Core\Support\Traits\UccelloModule;
+use Uccello\EloquentTree\Contracts\Tree;
+use Uccello\EloquentTree\Traits\IsTree;
 
-class ProductFamily extends Tree
+class ProductFamily extends UccelloModel implements Tree
 {
     use SoftDeletes;
     use UccelloModule;
+    use IsTree;
 
     /**
      * The table associated with the model.
@@ -57,9 +60,8 @@ class ProductFamily extends Tree
         $parentRecord = ProductFamily::find(request('parent'));
         if (!is_null($parentRecord)) {
             with($model)->setChildOf($parentRecord);
-        }
-        // Remove parent domain
-        else {
+        } else {
+            // Remove parent domain
             with($model)->setAsRoot();
         }
     }

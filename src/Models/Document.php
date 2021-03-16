@@ -2,13 +2,13 @@
 
 namespace Uccello\Crm\Models;
 
+use App\Models\UccelloModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
-use Uccello\Core\Database\Eloquent\Model;
 use Uccello\Core\Support\Traits\UccelloModule;
 
-class Document extends Model implements Searchable
+class Document extends UccelloModel implements Searchable
 {
     use SoftDeletes;
     use UccelloModule;

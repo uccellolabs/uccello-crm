@@ -2,15 +2,14 @@
 
 namespace Uccello\Crm\Models;
 
+use App\Models\UccelloModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
-use Uccello\Core\Database\Eloquent\Model;
 use Uccello\Core\Models\Domain;
 use Uccello\Core\Support\Traits\UccelloModule;
-use Uccello\Country\Models\Country;
 
-class Account extends Model implements Searchable
+class Account extends UccelloModel implements Searchable
 {
     use SoftDeletes;
     use UccelloModule;

@@ -10,9 +10,8 @@
         }
     ],
     "require": {
-        "uccello/uccello": "1.*",
-        "uccello/country": "dev-master",
-        "uccello/calendar": "dev-master"
+        "uccello/uccello": "2.*",
+        "uccello/country": "2.*"
     },
     "autoload": {
         "psr-4": {
