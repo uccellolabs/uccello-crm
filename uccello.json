@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "post-install": [
+            "@php artisan migrate",
+            "@php artisan migrate --path=@path/database/migrations",
+            "@php artisan vendor:publish --tag=crm-assets"
+        ]
+    }
+}
