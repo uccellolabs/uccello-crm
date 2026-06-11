@@ -1,0 +1,370 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans:
+        Inter, 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+    --font-mono:
+        'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular,
+        Menlo, Monaco, Consolas, monospace;
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-xl: calc(var(--radius) + 4px);
+
+    --duration-fast: 120ms;
+    --duration-normal: 200ms;
+    --duration-slow: 320ms;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-info: var(--info);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-brand-violet: var(--brand-violet);
+    --color-brand-cyan: var(--brand-cyan);
+    --color-brand-emerald: var(--brand-emerald);
+    --color-brand-amber: var(--brand-amber);
+    --color-brand-rose: var(--brand-rose);
+    --color-brand-indigo: var(--brand-indigo);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            Inter, 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+    }
+
+    /* Aurora gradient mesh — hero sections, login backgrounds (intense) */
+    .bg-aurora {
+        background:
+            radial-gradient(ellipse 80% 60% at 18% 12%, color-mix(in oklch, var(--brand-violet) 22%, transparent), transparent 60%),
+            radial-gradient(ellipse 60% 50% at 85% 22%, color-mix(in oklch, var(--brand-cyan) 18%, transparent), transparent 55%),
+            radial-gradient(ellipse 70% 60% at 50% 95%, color-mix(in oklch, var(--brand-indigo) 16%, transparent), transparent 60%),
+            var(--background);
+    }
+
+    .bg-aurora-dense {
+        background:
+            radial-gradient(ellipse 60% 50% at 12% 10%, color-mix(in oklch, var(--brand-violet) 34%, transparent), transparent 60%),
+            radial-gradient(ellipse 50% 42% at 88% 20%, color-mix(in oklch, var(--brand-cyan) 28%, transparent), transparent 55%),
+            radial-gradient(ellipse 55% 45% at 50% 88%, color-mix(in oklch, var(--brand-indigo) 24%, transparent), transparent 60%),
+            var(--background);
+    }
+
+    /* Subtle gradient mesh — for in-app headers / banners (lighter touch) */
+    .bg-mesh {
+        background:
+            radial-gradient(ellipse 60% 120% at 0% 0%, color-mix(in oklch, var(--brand-violet) 12%, transparent), transparent 55%),
+            radial-gradient(ellipse 50% 120% at 100% 0%, color-mix(in oklch, var(--brand-cyan) 10%, transparent), transparent 55%);
+    }
+
+    /* Signature brand gradient — for CTAs, monograms, accents */
+    .bg-brand-gradient {
+        background-image: linear-gradient(
+            135deg,
+            var(--brand-violet) 0%,
+            var(--brand-indigo) 55%,
+            var(--brand-cyan) 120%
+        );
+    }
+
+    .text-gradient {
+        background-image: linear-gradient(
+            120deg,
+            var(--brand-violet),
+            var(--brand-indigo)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Frosted surface — sidebar, overlays, floating bars */
+    .surface-glass {
+        background-color: color-mix(in oklch, var(--card) 78%, transparent);
+        backdrop-filter: blur(14px) saturate(1.4);
+        -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    }
+
+    /* Premium card shadow + interactive lift */
+    .shadow-card {
+        box-shadow:
+            0 1px 2px -1px color-mix(in oklch, var(--foreground) 8%, transparent),
+            0 8px 24px -16px color-mix(in oklch, var(--foreground) 22%, transparent);
+    }
+
+    .card-hover {
+        transition:
+            transform var(--duration-normal) var(--ease-out),
+            box-shadow var(--duration-normal) var(--ease-out),
+            border-color var(--duration-normal) var(--ease-out);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 2px 4px -2px color-mix(in oklch, var(--foreground) 10%, transparent),
+                0 18px 40px -20px color-mix(in oklch, var(--primary) 35%, transparent);
+        }
+    }
+
+    /* Glow shadows */
+    .shadow-glow-primary {
+        box-shadow:
+            0 0 0 1px color-mix(in oklch, var(--primary) 20%, transparent),
+            0 10px 30px -8px color-mix(in oklch, var(--primary) 38%, transparent);
+    }
+
+    .shadow-glow-violet {
+        box-shadow:
+            0 0 0 1px color-mix(in oklch, var(--brand-violet) 20%, transparent),
+            0 10px 30px -8px color-mix(in oklch, var(--brand-violet) 38%, transparent);
+    }
+
+    /* Chart bar grow-in (motion-safe). transform-origin set on the element. */
+    @media (prefers-reduced-motion: no-preference) {
+        .bar-grow {
+            transform-box: fill-box;
+            transform-origin: bottom;
+            animation: bar-grow var(--duration-slow) var(--ease-out) both;
+        }
+    }
+
+    @keyframes bar-grow {
+        from {
+            transform: scaleY(0);
+        }
+        to {
+            transform: scaleY(1);
+        }
+    }
+
+    @keyframes confetti-fall {
+        0% {
+            transform: translate3d(0, -12px, 0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translate3d(var(--dx, 0), 70vh, 0) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .confetti-piece {
+            display: none !important;
+        }
+    }
+}
+
+:root {
+    /* Cool, near-white canvas with a hint of slate */
+    --background: hsl(228 36% 98.5%);
+    --foreground: hsl(224 44% 12%);
+
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(224 44% 12%);
+
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(224 44% 12%);
+
+    /* Primary = brand blue */
+    --primary: #2740e0;
+    --primary-foreground: hsl(0 0% 100%);
+
+    --secondary: hsl(232 38% 96%);
+    --secondary-foreground: hsl(232 46% 34%);
+
+    --muted: hsl(228 28% 96%);
+    --muted-foreground: hsl(224 14% 44%);
+
+    --accent: hsl(199 95% 95%);
+    --accent-foreground: hsl(199 92% 30%);
+
+    --destructive: hsl(348 80% 55%);
+    --destructive-foreground: hsl(0 0% 100%);
+
+    --success: hsl(160 84% 36%);
+    --warning: hsl(35 92% 48%);
+    --info: hsl(199 89% 46%);
+
+    --border: hsl(224 22% 91%);
+    --input: hsl(224 22% 90%);
+    --ring: #2740e0;
+
+    /* Brand palette (variable names kept; hues modernised) */
+    --brand-violet: #2740e0; /* primary anchor */
+    --brand-cyan: hsl(199 89% 46%); /* sky / data */
+    --brand-emerald: hsl(160 84% 36%);
+    --brand-amber: hsl(35 92% 48%);
+    --brand-rose: hsl(348 80% 58%);
+    --brand-indigo: hsl(248 72% 58%); /* blue-violet — gradient companion */
+
+    --chart-1: #2740e0;
+    --chart-2: hsl(199 89% 46%);
+    --chart-3: hsl(160 84% 36%);
+    --chart-4: hsl(35 92% 48%);
+    --chart-5: hsl(348 80% 58%);
+
+    --radius: 0.7rem;
+
+    /* Sidebar — crisp, faintly blue-tinted */
+    --sidebar-background: hsl(228 34% 99%);
+    --sidebar-foreground: hsl(224 28% 30%);
+    --sidebar-primary: #2740e0;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(232 40% 95%);
+    --sidebar-accent-foreground: hsl(232 52% 32%);
+    --sidebar-border: hsl(224 22% 92%);
+    --sidebar-ring: #2740e0;
+    --sidebar: hsl(228 34% 99%);
+}
+
+.dark {
+    /* Deep slate-indigo, not pure black */
+    --background: hsl(226 32% 7%);
+    --foreground: hsl(220 22% 96%);
+
+    --card: hsl(225 28% 10.5%);
+    --card-foreground: hsl(220 22% 96%);
+
+    --popover: hsl(225 28% 10.5%);
+    --popover-foreground: hsl(220 22% 96%);
+
+    --primary: hsl(232 78% 70%);
+    --primary-foreground: hsl(232 60% 10%);
+
+    --secondary: hsl(226 24% 16%);
+    --secondary-foreground: hsl(220 22% 96%);
+
+    --muted: hsl(226 24% 14%);
+    --muted-foreground: hsl(220 14% 68%);
+
+    --accent: hsl(199 70% 18%);
+    --accent-foreground: hsl(199 90% 82%);
+
+    --destructive: hsl(348 85% 64%);
+    --destructive-foreground: hsl(0 0% 100%);
+
+    --success: hsl(160 66% 52%);
+    --warning: hsl(35 92% 60%);
+    --info: hsl(199 90% 58%);
+
+    --border: hsl(226 22% 18%);
+    --input: hsl(226 22% 19%);
+    --ring: hsl(232 78% 70%);
+
+    --brand-violet: hsl(232 78% 70%);
+    --brand-cyan: hsl(199 90% 58%);
+    --brand-emerald: hsl(160 66% 52%);
+    --brand-amber: hsl(35 92% 60%);
+    --brand-rose: hsl(348 85% 68%);
+    --brand-indigo: hsl(248 80% 72%);
+
+    --chart-1: hsl(232 78% 70%);
+    --chart-2: hsl(199 90% 58%);
+    --chart-3: hsl(160 66% 52%);
+    --chart-4: hsl(35 92% 60%);
+    --chart-5: hsl(348 85% 68%);
+
+    --sidebar-background: hsl(226 34% 8.5%);
+    --sidebar-foreground: hsl(220 18% 88%);
+    --sidebar-primary: hsl(232 78% 70%);
+    --sidebar-primary-foreground: hsl(232 60% 10%);
+    --sidebar-accent: hsl(226 26% 15%);
+    --sidebar-accent-foreground: hsl(220 18% 92%);
+    --sidebar-border: hsl(226 22% 16%);
+    --sidebar-ring: hsl(232 78% 70%);
+    --sidebar: hsl(226 34% 8.5%);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+
+    ::selection {
+        background-color: color-mix(in oklch, var(--brand-violet) 28%, transparent);
+    }
+
+    /* Premium scrollbars */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent) transparent;
+    }
+}

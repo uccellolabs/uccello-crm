@@ -1,0 +1,49 @@
+deptrac:
+  paths:
+    - ./app
+  exclude_files: []
+  layers:
+    - name: Domain
+      collectors:
+        - type: classLike
+          value: App\\Domain\\.*
+    - name: Application
+      collectors:
+        - type: classLike
+          value: App\\Application\\.*
+    - name: Infrastructure
+      collectors:
+        - type: classLike
+          value: App\\Infrastructure\\.*
+    - name: Framework
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: App\\.*
+          must_not:
+            - type: classLike
+              value: App\\Domain\\.*
+            - type: classLike
+              value: App\\Application\\.*
+            - type: classLike
+              value: App\\Infrastructure\\.*
+  ruleset:
+    Domain:
+      - Domain
+      - Framework
+    Application:
+      - Domain
+      - Application
+      - Infrastructure
+      - Framework
+    Infrastructure:
+      - Domain
+      - Application
+      - Infrastructure
+      - Framework
+    Framework:
+      - Domain
+      - Application
+      - Infrastructure
+      - Framework
