@@ -1,18 +1,13 @@
 ## Cet outil est gratuit. Le construire pour ton métier, c'est mon travail.
 
 Moi c'est Jonathan, je construis des outils sur mesure, boostés à l'IA,
-pour faire gagner du temps aux entreprises. Pas un consultant qui te dit
-d'aller sur ChatGPT : celui qui te livre l'outil souverain qui le fait,
-à ta place.
+pour faire gagner du temps aux entreprises.
+
+Je ne suis pas as un consultant qui te dit d'aller sur ChatGPT.
+Je suis plutôt celui qui te livre l'outil souverain qui le fait à ta place.
 
 Ce CRM, je l'ai codé en quelques jours, avec l'IA et 21 ans de métier
 derrière. C'est une démo de ce que je sais faire.
-
-### 🎬 Voir la démo en vidéo
-
-[![Démo d'Uccello CRM en vidéo](https://img.youtube.com/vi/UY--uJo_hio/maxresdefault.jpg)](https://youtu.be/UY--uJo_hio)
-
-▶️ **[Regarder la démo sur YouTube](https://youtu.be/UY--uJo_hio)** — un tour rapide du CRM en action.
 
 Si tu veux aller plus loin que la version offerte :
 - le brancher sur tes outils (mails, agenda, compta, ta stack existant)
@@ -22,6 +17,12 @@ Si tu veux aller plus loin que la version offerte :
 On en parle 30 minutes : 👉 [Réserver un créneau](https://calendar.app.google/qLg5TxaxEcJdsw9T7)
 
 Sinon, le code est à toi. Fais-en ce que tu veux.
+
+### Voir la démo en vidéo
+
+[![Démo d'Uccello CRM en vidéo](https://img.youtube.com/vi/UY--uJo_hio/maxresdefault.jpg)](https://youtu.be/UY--uJo_hio)
+
+**[Regarder la démo sur YouTube](https://youtu.be/UY--uJo_hio)** : un tour rapide du CRM en action.
 
 ---
 
