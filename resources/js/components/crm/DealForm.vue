@@ -5,7 +5,6 @@ import CustomFieldsForm from '@/components/crm/CustomFieldsForm.vue';
 import NullableSelect from '@/components/crm/NullableSelect.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
-import { useTranslations } from '@/composables/useTranslations';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useTranslations } from '@/composables/useTranslations';
 import { board, show, store, update } from '@/routes/deals';
 import type {
     CustomFieldDefinition,

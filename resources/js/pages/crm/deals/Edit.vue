@@ -53,18 +53,25 @@ const tips = computed(() => [
 ]);
 
 defineOptions({
-    layout: (props: { currentTeam?: Team | null; deal: DealDetail }) => ({
-        breadcrumbs: props.currentTeam
-            ? [
-                  { title: t('Pipeline'), href: board(props.currentTeam.slug) },
-                  {
-                      title: props.deal.name,
-                      href: show([props.currentTeam.slug, props.deal.id]),
-                  },
-                  { title: t('Edit'), href: '#' },
-              ]
-            : [],
-    }),
+    layout: (props: { currentTeam?: Team | null; deal: DealDetail }) => {
+        const { t } = useTranslations();
+
+        return {
+            breadcrumbs: props.currentTeam
+                ? [
+                      {
+                          title: t('Pipeline'),
+                          href: board(props.currentTeam.slug),
+                      },
+                      {
+                          title: props.deal.name,
+                          href: show([props.currentTeam.slug, props.deal.id]),
+                      },
+                      { title: t('Edit'), href: '#' },
+                  ]
+                : [],
+        };
+    },
 });
 </script>
 

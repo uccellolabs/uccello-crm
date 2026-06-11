@@ -69,7 +69,7 @@ const props = defineProps<{
     can: { update: boolean; delete: boolean };
 }>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const statTiles = computed(() => {
     const tiles: {
@@ -137,7 +137,7 @@ const openTasksCount = computed(
 const amountLabel = computed(() =>
     props.deal.amount == null
         ? null
-        : new Intl.NumberFormat('fr-FR', {
+        : new Intl.NumberFormat(localeTag.value, {
               style: 'currency',
               currency: props.deal.currency || 'EUR',
               maximumFractionDigits: 0,
@@ -158,7 +158,7 @@ const statusVariant = computed<'default' | 'secondary' | 'destructive'>(() => {
 
 const closeDateLabel = computed(() =>
     props.deal.expected_close_date
-        ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium' }).format(
+        ? new Intl.DateTimeFormat(localeTag.value, { dateStyle: 'medium' }).format(
               new Date(props.deal.expected_close_date),
           )
         : null,
@@ -171,14 +171,21 @@ function remove() {
 }
 
 defineOptions({
-    layout: (props: { currentTeam?: Team | null; deal: DealDetail }) => ({
-        breadcrumbs: props.currentTeam
-            ? [
-                  { title: t('Pipeline'), href: board(props.currentTeam.slug) },
-                  { title: props.deal.name, href: '#' },
-              ]
-            : [],
-    }),
+    layout: (props: { currentTeam?: Team | null; deal: DealDetail }) => {
+        const { t } = useTranslations();
+
+        return {
+            breadcrumbs: props.currentTeam
+                ? [
+                      {
+                          title: t('Pipeline'),
+                          href: board(props.currentTeam.slug),
+                      },
+                      { title: props.deal.name, href: '#' },
+                  ]
+                : [],
+        };
+    },
 });
 </script>
 

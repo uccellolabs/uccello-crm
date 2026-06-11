@@ -32,13 +32,13 @@ import TaskList from '@/components/crm/TaskList.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from '@/composables/useTranslations';
 import { destroy, edit, index } from '@/routes/companies';
 import {
     create as createContact,
     show as showContact,
 } from '@/routes/contacts';
 import { board, create as createDeal } from '@/routes/deals';
-import { useTranslations } from '@/composables/useTranslations';
 import type {
     ActivityItem,
     CompanyDetail,
@@ -85,7 +85,7 @@ const props = defineProps<{
     can: { update: boolean; delete: boolean };
 }>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const statTiles = computed(() => [
     {
@@ -171,7 +171,7 @@ const createdLabel = computed(() => {
         return null;
     }
 
-    return new Intl.DateTimeFormat('fr-FR', {
+    return new Intl.DateTimeFormat(localeTag.value, {
         day: 'numeric',
         month: 'long',
         year: 'numeric',

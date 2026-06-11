@@ -2,16 +2,19 @@
 import { Building2, GripVertical } from '@lucide/vue';
 import { computed } from 'vue';
 import InitialsAvatar from '@/components/crm/InitialsAvatar.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import type { DealCard } from '@/types';
 
 const props = defineProps<{ deal: DealCard }>();
+
+const { localeTag } = useTranslations();
 
 const amountLabel = computed(() => {
     if (props.deal.amount == null) {
         return null;
     }
 
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat(localeTag.value, {
         style: 'currency',
         currency: props.deal.currency || 'EUR',
         maximumFractionDigits: 0,

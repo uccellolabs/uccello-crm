@@ -55,7 +55,7 @@ defineOptions({
                           title: t('Contacts'),
                           href: index(props.currentTeam.slug),
                       },
-                      { title: t('New'), href: '#' },
+                      { title: t('New contact'), href: '#' },
                   ]
                 : [],
         };

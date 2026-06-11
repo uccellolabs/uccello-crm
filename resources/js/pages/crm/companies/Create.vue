@@ -5,8 +5,8 @@ import { computed } from 'vue';
 import CompanyForm from '@/components/crm/CompanyForm.vue';
 import FormShell from '@/components/crm/FormShell.vue';
 import FormTips from '@/components/crm/FormTips.vue';
-import { index } from '@/routes/companies';
 import { useTranslations } from '@/composables/useTranslations';
+import { index } from '@/routes/companies';
 import type { CustomFieldDefinition, SelectOption, Team } from '@/types';
 
 defineProps<{
@@ -54,7 +54,7 @@ defineOptions({
                           title: t('Companies'),
                           href: index(props.currentTeam.slug),
                       },
-                      { title: t('New'), href: '#' },
+                      { title: t('New company'), href: '#' },
                   ]
                 : [],
         };

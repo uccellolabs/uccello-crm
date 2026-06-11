@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { show as showDeal } from '@/routes/deals';
 import type { Team } from '@/types';
 
@@ -19,12 +20,14 @@ defineProps<{
 const page = usePage<{ currentTeam?: Team | null }>();
 const teamSlug = computed(() => page.props.currentTeam?.slug ?? '');
 
+const { localeTag } = useTranslations();
+
 function amountLabel(amount: number | null): string {
     if (amount == null) {
         return '—';
     }
 
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat(localeTag.value, {
         style: 'currency',
         currency: 'EUR',
         maximumFractionDigits: 0,

@@ -72,7 +72,7 @@ const props = defineProps<{
     can: { update: boolean; delete: boolean };
 }>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const statTiles = computed(() => [
     {
@@ -120,7 +120,7 @@ const createdLabel = computed(() => {
         return null;
     }
 
-    return new Intl.DateTimeFormat('fr-FR', {
+    return new Intl.DateTimeFormat(localeTag.value, {
         day: 'numeric',
         month: 'long',
         year: 'numeric',

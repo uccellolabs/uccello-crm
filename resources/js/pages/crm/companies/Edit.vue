@@ -5,8 +5,8 @@ import { computed } from 'vue';
 import CompanyForm from '@/components/crm/CompanyForm.vue';
 import FormShell from '@/components/crm/FormShell.vue';
 import FormTips from '@/components/crm/FormTips.vue';
-import { index, show } from '@/routes/companies';
 import { useTranslations } from '@/composables/useTranslations';
+import { index, show } from '@/routes/companies';
 import type {
     CompanyDetail,
     CustomFieldDefinition,

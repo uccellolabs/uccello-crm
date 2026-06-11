@@ -34,7 +34,7 @@ type Props = {
 
 defineProps<Props>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const page = usePage();
 const teamSlug = computed(() => page.props.currentTeam?.slug ?? '');
@@ -72,10 +72,12 @@ const priorityVariant: Record<string, 'destructive' | 'secondary' | 'outline'> =
         low: 'outline',
     };
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium' });
+const dateFormatter = computed(
+    () => new Intl.DateTimeFormat(localeTag.value, { dateStyle: 'medium' }),
+);
 
 function formatDate(iso: string | null): string {
-    return iso ? dateFormatter.format(new Date(iso)) : '—';
+    return iso ? dateFormatter.value.format(new Date(iso)) : '—';
 }
 
 function isOverdue(task: TaskItem): boolean {
@@ -87,11 +89,15 @@ function isOverdue(task: TaskItem): boolean {
 }
 
 defineOptions({
-    layout: (props: { currentTeam?: Team | null }) => ({
-        breadcrumbs: props.currentTeam
-            ? [{ title: t('Tasks'), href: index(props.currentTeam.slug) }]
-            : [],
-    }),
+    layout: (props: { currentTeam?: Team | null }) => {
+        const { t } = useTranslations();
+
+        return {
+            breadcrumbs: props.currentTeam
+                ? [{ title: t('Tasks'), href: index(props.currentTeam.slug) }]
+                : [],
+        };
+    },
 });
 </script>
 

@@ -18,8 +18,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { create, index, show } from '@/routes/companies';
 import { useTranslations } from '@/composables/useTranslations';
+import { create, index, show } from '@/routes/companies';
 import type { CompanyListItem, Paginated, Team } from '@/types';
 
 type Props = {

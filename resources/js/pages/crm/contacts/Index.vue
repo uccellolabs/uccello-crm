@@ -136,7 +136,7 @@ defineOptions({
             >
                 <Button v-if="can.create" as-child>
                     <Link :href="create(teamSlug)">
-                        <Plus class="h-4 w-4" /> Nouveau contact
+                        <Plus class="h-4 w-4" /> {{ t('New contact') }}
                     </Link>
                 </Button>
             </EmptyState>
@@ -229,7 +229,7 @@ defineOptions({
                             >
                                 <Button v-if="can.create" as-child>
                                     <Link :href="create(teamSlug)">
-                                        <Plus class="h-4 w-4" /> Nouveau contact
+                                        <Plus class="h-4 w-4" /> {{ t('New contact') }}
                                     </Link>
                                 </Button>
                             </EmptyState>

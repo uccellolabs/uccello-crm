@@ -228,9 +228,10 @@ defineOptions({
                             {{ stage.probability ?? 0 }} % ·
                             {{ stage.deals_count }}
                             {{
-                                stage.deals_count > 1
-                                    ? 'opportunités'
-                                    : 'opportunité'
+                                tChoice(
+                                    'opportunity|opportunities',
+                                    stage.deals_count,
+                                )
                             }}
                         </p>
                     </div>
@@ -239,7 +240,7 @@ defineOptions({
                         size="icon"
                         class="h-8 w-8"
                         :disabled="stageIndex === 0"
-                        aria-label="Monter l'étape"
+                        :aria-label="t('Move stage up')"
                         @click="move(pipeline, stage, -1)"
                     >
                         <ArrowUp class="h-4 w-4" />
@@ -249,7 +250,7 @@ defineOptions({
                         size="icon"
                         class="h-8 w-8"
                         :disabled="stageIndex === pipeline.stages.length - 1"
-                        aria-label="Descendre l'étape"
+                        :aria-label="t('Move stage down')"
                         @click="move(pipeline, stage, 1)"
                     >
                         <ArrowDown class="h-4 w-4" />
@@ -258,21 +259,25 @@ defineOptions({
                         variant="ghost"
                         size="icon"
                         class="h-8 w-8"
-                        aria-label="Modifier l'étape"
+                        :aria-label="t('Edit stage')"
                         @click="openEdit(stage)"
                     >
                         <Pencil class="h-4 w-4" />
                     </Button>
                     <ConfirmDialog
                         v-if="canDelete(stage)"
-                        :description="`Supprimer l'étape « ${stage.name} » ?`"
+                        :description="
+                            t('Delete the stage « :name » ?', {
+                                name: stage.name,
+                            })
+                        "
                         @confirm="remove(stage.id)"
                     >
                         <Button
                             variant="ghost"
                             size="icon"
                             class="h-8 w-8"
-                            aria-label="Supprimer l'étape"
+                            :aria-label="t('Delete stage')"
                         >
                             <Trash2 class="h-4 w-4 text-destructive" />
                         </Button>
@@ -283,8 +288,8 @@ defineOptions({
                         aria-hidden="true"
                         :title="
                             stage.is_won || stage.is_lost
-                                ? 'Étape terminale : non supprimable'
-                                : 'Déplacez d\'abord les opportunités de cette étape'
+                                ? t('Terminal stage: cannot be deleted')
+                                : t('Move the deals out of this stage first')
                         "
                     />
                 </div>
@@ -295,27 +300,31 @@ defineOptions({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {{ editing ? "Modifier l'étape" : 'Nouvelle étape' }}
+                        {{ editing ? t('Edit stage') : t('New stage') }}
                     </DialogTitle>
                     <DialogDescription>
                         {{
                             editing
-                                ? 'Le nom, la couleur et la probabilité sont modifiables.'
-                                : "L'étape sera insérée avant les étapes terminales (Gagné / Perdu)."
+                                ? t(
+                                      'The name, color and probability are editable.',
+                                  )
+                                : t(
+                                      'The stage will be inserted before the terminal stages (Won / Lost).',
+                                  )
                         }}
                     </DialogDescription>
                 </DialogHeader>
 
                 <form class="space-y-4" @submit.prevent="submit">
                     <div class="grid gap-2">
-                        <Label for="stage-name">Nom</Label>
+                        <Label for="stage-name">{{ t('Name') }}</Label>
                         <Input id="stage-name" v-model="form.name" required />
                         <InputError :message="form.errors.name" />
                     </div>
 
                     <div class="grid gap-2">
                         <Label for="stage-probability">
-                            Probabilité de gain (%)
+                            {{ t('Win probability (%)') }}
                         </Label>
                         <Input
                             id="stage-probability"
@@ -329,7 +338,7 @@ defineOptions({
                     </div>
 
                     <div class="grid gap-2">
-                        <Label>Couleur</Label>
+                        <Label>{{ t('Color') }}</Label>
                         <div class="flex flex-wrap items-center gap-2">
                             <button
                                 v-for="swatch in SWATCHES"
@@ -343,7 +352,7 @@ defineOptions({
                                     )
                                 "
                                 :style="{ backgroundColor: swatch }"
-                                :aria-label="`Couleur ${swatch}`"
+                                :aria-label="t('Color :color', { color: swatch })"
                                 @click="form.color = swatch"
                             />
                         </div>
@@ -356,10 +365,10 @@ defineOptions({
                             variant="ghost"
                             @click="editorOpen = false"
                         >
-                            Annuler
+                            {{ t('Cancel') }}
                         </Button>
                         <Button type="submit" :disabled="form.processing">
-                            {{ editing ? 'Enregistrer' : 'Ajouter' }}
+                            {{ editing ? t('Save') : t('Add') }}
                         </Button>
                     </DialogFooter>
                 </form>

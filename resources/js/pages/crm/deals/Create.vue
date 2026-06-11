@@ -54,14 +54,21 @@ const tips = computed(() => [
 ]);
 
 defineOptions({
-    layout: (props: { currentTeam?: Team | null }) => ({
-        breadcrumbs: props.currentTeam
-            ? [
-                  { title: t('Pipeline'), href: board(props.currentTeam.slug) },
-                  { title: t('New opportunity'), href: '#' },
-              ]
-            : [],
-    }),
+    layout: (props: { currentTeam?: Team | null }) => {
+        const { t } = useTranslations();
+
+        return {
+            breadcrumbs: props.currentTeam
+                ? [
+                      {
+                          title: t('Pipeline'),
+                          href: board(props.currentTeam.slug),
+                      },
+                      { title: t('New opportunity'), href: '#' },
+                  ]
+                : [],
+        };
+    },
 });
 </script>
 

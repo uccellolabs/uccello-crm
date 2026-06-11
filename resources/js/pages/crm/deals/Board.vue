@@ -27,7 +27,7 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const page = usePage();
 const teamSlug = computed(() => page.props.currentTeam?.slug ?? '');
@@ -69,11 +69,14 @@ function celebrateWin() {
     });
 }
 
-const currency = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-});
+const currency = computed(
+    () =>
+        new Intl.NumberFormat(localeTag.value, {
+            style: 'currency',
+            currency: 'EUR',
+            maximumFractionDigits: 0,
+        }),
+);
 
 function onDragStart(dealId: number, stageId: number) {
     if (!props.can.manage) {
@@ -137,11 +140,15 @@ function onDrop(toStageId: number, index: number | null) {
 }
 
 defineOptions({
-    layout: (props: { currentTeam?: Team | null }) => ({
-        breadcrumbs: props.currentTeam
-            ? [{ title: t('Pipeline'), href: board(props.currentTeam.slug) }]
-            : [],
-    }),
+    layout: (props: { currentTeam?: Team | null }) => {
+        const { t } = useTranslations();
+
+        return {
+            breadcrumbs: props.currentTeam
+                ? [{ title: t('Pipeline'), href: board(props.currentTeam.slug) }]
+                : [],
+        };
+    },
 });
 </script>
 

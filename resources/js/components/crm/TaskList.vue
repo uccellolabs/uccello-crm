@@ -32,7 +32,7 @@ const props = defineProps<{
     canManage: boolean;
 }>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const page = usePage();
 const teamSlug = computed(() => page.props.currentTeam?.slug ?? '');
@@ -74,10 +74,12 @@ const priorityVariant: Record<string, 'destructive' | 'secondary' | 'outline'> =
         low: 'outline',
     };
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium' });
+const dateFormatter = computed(
+    () => new Intl.DateTimeFormat(localeTag.value, { dateStyle: 'medium' }),
+);
 
 function formatDate(iso: string | null): string | null {
-    return iso ? dateFormatter.format(new Date(iso)) : null;
+    return iso ? dateFormatter.value.format(new Date(iso)) : null;
 }
 </script>
 
@@ -161,7 +163,7 @@ function formatDate(iso: string | null): string | null {
                     </p>
                     <p class="text-xs text-muted-foreground">
                         <template v-if="formatDate(task.due_at)">
-                            {{ t('Due :date', { date: formatDate(task.due_at) }) }}
+                            {{ t('Due :date', { date: formatDate(task.due_at) ?? '' }) }}
                         </template>
                         <template v-if="task.assignee">
                             · {{ task.assignee.name }}

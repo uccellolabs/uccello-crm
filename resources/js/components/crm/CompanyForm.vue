@@ -14,8 +14,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { index, show, store, update } from '@/routes/companies';
 import { useTranslations } from '@/composables/useTranslations';
+import { index, show, store, update } from '@/routes/companies';
 import type {
     CompanyDetail,
     CustomFieldDefinition,

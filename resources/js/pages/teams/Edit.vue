@@ -300,7 +300,7 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Cancel invitation</p>
+                                <p>{{ t('Cancel invitation') }}</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>

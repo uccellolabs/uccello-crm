@@ -31,7 +31,7 @@ const props = defineProps<{
     canManage: boolean;
 }>();
 
-const { t } = useTranslations();
+const { t, localeTag } = useTranslations();
 
 const page = usePage();
 const teamSlug = computed(() => page.props.currentTeam?.slug ?? '');
@@ -65,13 +65,16 @@ function submit() {
     });
 }
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-});
+const dateFormatter = computed(
+    () =>
+        new Intl.DateTimeFormat(localeTag.value, {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        }),
+);
 
 function formatDate(iso: string): string {
-    return dateFormatter.format(new Date(iso));
+    return dateFormatter.value.format(new Date(iso));
 }
 
 function remove(id: number) {
