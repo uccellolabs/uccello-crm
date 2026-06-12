@@ -3,10 +3,7 @@
 namespace App\Domain\Shared\Enums;
 
 /**
- * The admin-configurable option lists ("picklists") of the CRM. Each case
- * maps to a set of rows in `picklist_options`, lazily seeded per team from
- * the defaults below. System options are protected from deletion because
- * application UI (icons, badge variants) keys off their values.
+ * The admin-configurable option lists ("picklists") of the CRM.
  */
 enum Picklist: string
 {
@@ -15,32 +12,6 @@ enum Picklist: string
     case TaskPriority = 'task_priority';
 
     /**
-     * Human-readable label for the admin screen.
-     */
-    public function label(): string
-    {
-        return match ($this) {
-            self::Industry => __('Industries'),
-            self::ActivityType => __('Activity types'),
-            self::TaskPriority => __('Task priorities'),
-        };
-    }
-
-    /**
-     * Short description for the admin screen.
-     */
-    public function description(): string
-    {
-        return match ($this) {
-            self::Industry => __('Offered in the company « Industry » field.'),
-            self::ActivityType => __('Offered when logging an activity.'),
-            self::TaskPriority => __('Offered when creating a task.'),
-        };
-    }
-
-    /**
-     * The default options a new team starts with.
-     *
      * @return list<array{value: string, label: string, color: string|null, is_system: bool}>
      */
     public function defaults(): array
@@ -63,22 +34,5 @@ enum Picklist: string
                 ['value' => 'high', 'label' => 'Haute', 'color' => '#f43f5e', 'is_system' => true],
             ],
         };
-    }
-
-    /**
-     * Options for the admin list selector.
-     *
-     * @return array<int, array{value: string, label: string, description: string}>
-     */
-    public static function options(): array
-    {
-        return array_map(
-            fn (self $list) => [
-                'value' => $list->value,
-                'label' => $list->label(),
-                'description' => $list->description(),
-            ],
-            self::cases(),
-        );
     }
 }

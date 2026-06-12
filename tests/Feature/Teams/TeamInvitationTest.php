@@ -14,6 +14,46 @@ class TeamInvitationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_owner_role_cannot_be_assigned_via_invitation(): void
+    {
+        Notification::fake();
+
+        $owner = User::factory()->create();
+        $team = Team::factory()->create();
+        $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
+
+        $this->actingAs($owner)
+            ->post(route('teams.invitations.store', $team), [
+                'email' => 'invited@example.com',
+                'role' => TeamRole::Owner->value,
+            ])
+            ->assertSessionHasErrors('role');
+    }
+
+    public function test_members_do_not_see_invitation_codes_on_team_edit_page(): void
+    {
+        $owner = User::factory()->create();
+        $member = User::factory()->create();
+        $team = Team::factory()->create();
+
+        $team->members()->attach($owner, ['role' => TeamRole::Owner->value]);
+        $team->members()->attach($member, ['role' => TeamRole::Member->value]);
+
+        TeamInvitation::factory()->create([
+            'team_id' => $team->id,
+            'email' => 'invited@example.com',
+            'invited_by' => $owner->id,
+        ]);
+
+        $response = $this->actingAs($member)
+            ->get(route('teams.edit', $team));
+
+        $response->assertOk();
+        $invitations = $response->original->getData()['page']['props']['invitations'] ?? [];
+        $this->assertNotEmpty($invitations);
+        $this->assertArrayNotHasKey('code', $invitations[0]);
+    }
+
     public function test_team_invitations_can_be_created()
     {
         Notification::fake();

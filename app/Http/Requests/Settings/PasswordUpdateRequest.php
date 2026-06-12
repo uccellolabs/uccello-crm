@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Settings;
 
+use App\Application\Settings\Commands\UpdatePasswordCommand;
 use App\Concerns\PasswordValidationRules;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -21,5 +22,12 @@ class PasswordUpdateRequest extends FormRequest
             'current_password' => $this->currentPasswordRules(),
             'password' => $this->passwordRules(),
         ];
+    }
+
+    public function toCommand(): UpdatePasswordCommand
+    {
+        return new UpdatePasswordCommand(
+            password: $this->validated('password'),
+        );
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Application\Dashboard\Queries\DashboardMetricsQueryInterface;
-use App\Domain\Shared\ValueObjects\DateRange;
+use App\Http\Requests\DashboardRequest;
 use App\Models\Company;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,17 +15,11 @@ class DashboardController extends Controller
         private readonly DashboardMetricsQueryInterface $metrics,
     ) {}
 
-    /**
-     * Render the CRM dashboard scoped to a date range.
-     */
-    public function index(Request $request): Response
+    public function index(DashboardRequest $request): Response
     {
         Gate::authorize('viewAny', Company::class);
 
-        $page = $this->metrics->forRange(DateRange::fromStrings(
-            $request->string('from')->toString(),
-            $request->string('to')->toString(),
-        ));
+        $page = $this->metrics->forRange($request->dateRange());
 
         return Inertia::render('Dashboard', $page->toArray());
     }

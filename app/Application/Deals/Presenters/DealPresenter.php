@@ -5,6 +5,7 @@ namespace App\Application\Deals\Presenters;
 use App\Application\Deals\DTOs\DealCardData;
 use App\Application\Deals\DTOs\DealDetailData;
 use App\Application\Deals\DTOs\DealSummaryData;
+use App\Application\Shared\Presenters\EnumLabels;
 use App\Models\Deal;
 
 class DealPresenter
@@ -31,7 +32,7 @@ class DealPresenter
             amount: $deal->amount !== null ? (float) $deal->amount : null,
             currency: $deal->currency,
             status: $deal->status->value,
-            statusLabel: $deal->status->label(),
+            statusLabel: EnumLabels::dealStatus($deal->status),
             pipelineId: $deal->pipeline_id,
             pipelineStageId: $deal->pipeline_stage_id,
             stage: ['id' => $deal->stage->id, 'name' => $deal->stage->name, 'color' => $deal->stage->color],

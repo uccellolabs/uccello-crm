@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Crm;
 
+use App\Application\Shared\Commands\ReorderIdsCommand;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReorderPipelineStagesRequest extends FormRequest
@@ -12,14 +13,15 @@ class ReorderPipelineStagesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => ['required', 'array'],
+            'ids' => ['required', 'array', 'max:100'],
             'ids.*' => ['integer'],
         ];
     }
 
-    /** @return list<int> */
-    public function orderedIds(): array
+    public function toCommand(): ReorderIdsCommand
     {
-        return array_values($this->collect('ids')->map(fn ($id) => (int) $id)->all());
+        return new ReorderIdsCommand(
+            ids: array_values($this->collect('ids')->map(fn ($id) => (int) $id)->all()),
+        );
     }
 }

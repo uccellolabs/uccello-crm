@@ -97,8 +97,8 @@ async function send(): Promise<void> {
     scrollToEnd();
 
     const payload = messages.value
-        .filter((message) => !message.pending && !message.error && message.content !== '')
-        .map((message) => ({ role: message.role, content: message.content }));
+        .filter((message) => message.role === 'user' && !message.pending && !message.error && message.content !== '')
+        .map((message) => ({ role: 'user' as const, content: message.content }));
 
     try {
         const response = await fetch(`/${teamSlug.value}/assistant/chat`, {

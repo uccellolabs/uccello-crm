@@ -40,7 +40,9 @@ Route::prefix('{current_team}')
     ->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::post('assistant/chat', [AssistantController::class, 'chat'])->name('assistant.chat');
+        Route::post('assistant/chat', [AssistantController::class, 'chat'])
+            ->middleware('throttle:10,1')
+            ->name('assistant.chat');
 
         Route::resource('companies', CompanyController::class);
         Route::resource('contacts', ContactController::class);
@@ -73,7 +75,7 @@ Route::prefix('{current_team}')
         Route::delete('pipeline-settings/stages/{stage}', [PipelineSettingsController::class, 'destroyStage'])->name('pipeline-settings.stages.destroy');
     });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('invitations/{invitation}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
 });
 

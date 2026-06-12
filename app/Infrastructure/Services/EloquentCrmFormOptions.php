@@ -6,6 +6,7 @@ use App\Application\Crm\DTOs\SelectOptionData;
 use App\Application\Crm\Services\CrmFormOptions;
 use App\Models\Company;
 use App\Models\Contact;
+use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\User;
@@ -34,6 +35,13 @@ class EloquentCrmFormOptions implements CrmFormOptions
     {
         return array_values(Contact::query()->orderBy('last_name')->get(['id', 'first_name', 'last_name'])
             ->map(fn (Contact $contact) => new SelectOptionData($contact->id, $contact->full_name))
+            ->all());
+    }
+
+    public function deals(): array
+    {
+        return array_values(Deal::query()->orderBy('name')->get(['id', 'name'])
+            ->map(fn (Deal $deal) => new SelectOptionData($deal->id, $deal->name))
             ->all());
     }
 

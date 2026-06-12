@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Crm;
 
+use App\Application\Deals\Commands\MoveDealCommand;
 use App\Models\Deal;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
@@ -30,5 +31,13 @@ class MoveDealRequest extends CrmFormRequest
             ],
             'position' => ['required', 'integer', 'min:0'],
         ];
+    }
+
+    public function toCommand(): MoveDealCommand
+    {
+        return new MoveDealCommand(
+            stageId: (int) $this->validated('stage_id'),
+            position: (int) $this->validated('position'),
+        );
     }
 }

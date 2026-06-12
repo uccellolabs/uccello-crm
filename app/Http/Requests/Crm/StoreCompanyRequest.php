@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Crm;
 
+use App\Application\Companies\Commands\CreateCompanyCommand;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class StoreCompanyRequest extends CrmFormRequest
@@ -31,5 +32,24 @@ class StoreCompanyRequest extends CrmFormRequest
     protected function customFieldEntity(): ?string
     {
         return 'company';
+    }
+
+    public function toCommand(): CreateCompanyCommand
+    {
+        $data = $this->validatedWithCustomFields();
+
+        return new CreateCompanyCommand(
+            name: $data['name'],
+            domain: $data['domain'] ?? null,
+            industry: $data['industry'] ?? null,
+            phone: $data['phone'] ?? null,
+            website: $data['website'] ?? null,
+            address: $data['address'] ?? null,
+            city: $data['city'] ?? null,
+            postalCode: $data['postal_code'] ?? null,
+            country: $data['country'] ?? null,
+            ownerId: isset($data['owner_id']) ? (int) $data['owner_id'] : null,
+            customFields: $data['custom_fields'] ?? null,
+        );
     }
 }

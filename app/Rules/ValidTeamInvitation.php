@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Domain\Teams\Services\TeamInvitationAcceptancePolicy;
 use App\Models\TeamInvitation;
 use App\Models\User;
 use Closure;
@@ -10,9 +11,11 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class ValidTeamInvitation implements ValidationRule
 {
-    public function __construct(protected ?User $user)
-    {
-        //
+    public function __construct(
+        protected ?User $user,
+        protected ?TeamInvitationAcceptancePolicy $policy = null,
+    ) {
+        $this->policy ??= new TeamInvitationAcceptancePolicy;
     }
 
     /**
@@ -28,20 +31,16 @@ class ValidTeamInvitation implements ValidationRule
             return;
         }
 
-        if ($value->isAccepted()) {
-            $fail(__('This invitation has already been accepted.'));
+        $reason = $this->policy->blockReason($value, $this->user->email);
 
+        if ($reason === null) {
             return;
         }
 
-        if ($value->isExpired()) {
-            $fail(__('This invitation has expired.'));
-
-            return;
-        }
-
-        if (strtolower($value->email) !== strtolower($this->user->email)) {
-            $fail(__('This invitation was sent to a different email address.'));
-        }
+        $fail(match ($reason->value) {
+            'already_accepted' => __('This invitation has already been accepted.'),
+            'expired' => __('This invitation has expired.'),
+            default => __('This invitation was sent to a different email address.'),
+        });
     }
 }

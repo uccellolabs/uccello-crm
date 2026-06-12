@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests\Crm;
 
+use App\Application\CustomFields\Commands\CreateCustomFieldCommand;
+use App\Application\CustomFields\Commands\UpdateCustomFieldCommand;
 use App\Domain\Shared\Enums\CrmEntity;
 use App\Domain\Shared\Enums\CustomFieldType;
+use App\Models\CustomFieldDefinition;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -11,8 +14,6 @@ use Illuminate\Validation\Rule;
 class SaveCustomFieldRequest extends FormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -43,8 +44,6 @@ class SaveCustomFieldRequest extends FormRequest
     }
 
     /**
-     * The choices as a normalized list of {value, label} pairs.
-     *
      * @return array<int, array{value: string, label: string}>
      */
     public function choicePairs(): array
@@ -59,5 +58,35 @@ class SaveCustomFieldRequest extends FormRequest
             ->map(fn (string $choice) => ['value' => $choice, 'label' => $choice])
             ->values()
             ->all();
+    }
+
+    public function toCreateCommand(): CreateCustomFieldCommand
+    {
+        $data = $this->validated();
+
+        return CreateCustomFieldCommand::fromForm(
+            entityType: $data['entity_type'],
+            label: $data['label'],
+            type: CustomFieldType::from($data['type']),
+            choicePairs: $this->choicePairs(),
+            isRequired: $this->boolean('is_required'),
+            isFilterable: $this->boolean('is_filterable'),
+            relatedModule: $data['related_module'] ?? null,
+            helpText: $data['help_text'] ?? null,
+        );
+    }
+
+    public function toUpdateCommand(CustomFieldDefinition $definition): UpdateCustomFieldCommand
+    {
+        $data = $this->validated();
+
+        return UpdateCustomFieldCommand::fromDefinition(
+            definition: $definition,
+            label: $data['label'],
+            choicePairs: $this->choicePairs(),
+            isRequired: $this->boolean('is_required'),
+            isFilterable: $this->boolean('is_filterable'),
+            helpText: $data['help_text'] ?? null,
+        );
     }
 }

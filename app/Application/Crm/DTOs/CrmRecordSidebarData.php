@@ -11,7 +11,6 @@ final readonly class CrmRecordSidebarData
      * @param  list<array{value: string, label: string}>  $activityTypes
      * @param  list<array{value: string, label: string}>  $taskPriorities
      * @param  list<array<string, mixed>>  $customFields
-     * @param  array{update: bool, delete: bool}  $can
      */
     public function __construct(
         public array $activities,
@@ -20,7 +19,6 @@ final readonly class CrmRecordSidebarData
         public array $activityTypes,
         public array $taskPriorities,
         public array $customFields,
-        public array $can,
     ) {}
 
     /** @return array<string, mixed> */
@@ -33,7 +31,6 @@ final readonly class CrmRecordSidebarData
             'activityTypes' => $this->activityTypes,
             'taskPriorities' => $this->taskPriorities,
             'customFields' => $this->customFields,
-            'can' => $this->can,
         ];
     }
 }

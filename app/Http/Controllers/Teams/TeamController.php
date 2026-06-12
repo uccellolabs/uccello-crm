@@ -2,144 +2,74 @@
 
 namespace App\Http\Controllers\Teams;
 
-use App\Actions\Teams\CreateTeam;
-use App\Domain\Shared\Enums\TeamRole;
+use App\Application\Teams\Queries\GetTeamEditPageQueryInterface;
+use App\Application\Teams\Queries\ListUserTeamsQueryInterface;
+use App\Application\Teams\UseCases\CreateTeam;
+use App\Application\Teams\UseCases\DeleteTeam;
+use App\Application\Teams\UseCases\SwitchTeam;
+use App\Application\Teams\UseCases\UpdateTeam;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teams\DeleteTeamRequest;
 use App\Http\Requests\Teams\SaveTeamRequest;
-use App\Models\Membership;
 use App\Models\Team;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TeamController extends Controller
 {
-    /**
-     * Display a listing of the user's teams.
-     */
-    public function index(Request $request): Response
+    public function index(Request $request, ListUserTeamsQueryInterface $listUserTeams): Response
     {
-        $user = $request->user();
-
         return Inertia::render('teams/Index', [
-            'teams' => $user->toUserTeams(includeCurrent: true),
+            'teams' => $listUserTeams->forUser($request->user(), includeCurrent: true),
         ]);
     }
 
-    /**
-     * Store a newly created team.
-     */
     public function store(SaveTeamRequest $request, CreateTeam $createTeam): RedirectResponse
     {
-        $team = $createTeam->handle($request->user(), $request->validated('name'));
+        $team = $createTeam->handle($request->user(), $request->toCreateCommand());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team created.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
     }
 
-    /**
-     * Show the team edit page.
-     */
-    public function edit(Request $request, Team $team): Response
+    public function edit(Request $request, Team $team, GetTeamEditPageQueryInterface $getTeamEditPage): Response
     {
-        $user = $request->user();
+        $page = $getTeamEditPage->forUserAndTeam($request->user(), $team);
 
         return Inertia::render('teams/Edit', [
-            'team' => [
-                'id' => $team->id,
-                'name' => $team->name,
-                'slug' => $team->slug,
-                'isPersonal' => $team->is_personal,
-            ],
-            'members' => $team->members()->get()->map(function (User $member) {
-                /** @var Membership $membership */
-                $membership = $member->getRelation('pivot');
-
-                return [
-                    'id' => $member->id,
-                    'name' => $member->name,
-                    'email' => $member->email,
-                    'avatar' => $member->avatar ?? null,
-                    'role' => $membership->role->value,
-                    'role_label' => $membership->role->label(),
-                ];
-            }),
-            'invitations' => $team->invitations()
-                ->whereNull('accepted_at')
-                ->get()
-                ->map(fn ($invitation) => [
-                    'code' => $invitation->code,
-                    'email' => $invitation->email,
-                    'role' => $invitation->role->value,
-                    'role_label' => $invitation->role->label(),
-                    'created_at' => $invitation->created_at->toISOString(),
-                ]),
-            'permissions' => $user->toTeamPermissions($team),
-            'availableRoles' => TeamRole::assignable(),
+            'team' => $page->team,
+            'members' => $page->members,
+            'invitations' => $page->invitations,
+            'permissions' => $page->permissions,
+            'availableRoles' => $page->availableRoles,
         ]);
     }
 
-    /**
-     * Update the specified team.
-     */
-    public function update(SaveTeamRequest $request, Team $team): RedirectResponse
+    public function update(SaveTeamRequest $request, Team $team, UpdateTeam $updateTeam): RedirectResponse
     {
         Gate::authorize('update', $team);
 
-        $team = DB::transaction(function () use ($request, $team) {
-            $team = Team::whereKey($team->id)->lockForUpdate()->firstOrFail();
-
-            $team->update(['name' => $request->validated('name')]);
-
-            return $team;
-        });
+        $team = $updateTeam->handle($team, $request->toUpdateCommand());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team updated.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
     }
 
-    /**
-     * Switch the user's current team.
-     */
-    public function switch(Request $request, Team $team): RedirectResponse
+    public function switch(Request $request, Team $team, SwitchTeam $switchTeam): RedirectResponse
     {
-        abort_unless($request->user()->belongsToTeam($team), 403);
-
-        $request->user()->switchTeam($team);
+        $switchTeam->handle($request->user(), $team);
 
         return back();
     }
 
-    /**
-     * Delete the specified team.
-     */
-    public function destroy(DeleteTeamRequest $request, Team $team): RedirectResponse
+    public function destroy(DeleteTeamRequest $request, Team $team, DeleteTeam $deleteTeam): RedirectResponse
     {
-        $user = $request->user();
-        $fallbackTeam = $user->isCurrentTeam($team)
-            ? $user->fallbackTeam($team)
-            : null;
-
-        DB::transaction(function () use ($user, $team) {
-            User::where('current_team_id', $team->id)
-                ->where('id', '!=', $user->id)
-                ->each(fn (User $affectedUser) => $affectedUser->switchTeam($affectedUser->personalTeam()));
-
-            $team->invitations()->delete();
-            $team->memberships()->delete();
-            $team->delete();
-        });
-
-        if ($fallbackTeam) {
-            $user->switchTeam($fallbackTeam);
-        }
+        $deleteTeam->handle($request->user(), $team);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team deleted.')]);
 

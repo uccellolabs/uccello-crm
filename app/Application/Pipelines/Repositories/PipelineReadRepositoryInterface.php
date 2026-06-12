@@ -9,5 +9,7 @@ interface PipelineReadRepositoryInterface
 {
     public function resolveForRequest(?int $pipelineId): Pipeline;
 
+    public function findOrFail(int $id): Pipeline;
+
     public function findStageOrFail(int $stageId): PipelineStage;
 }

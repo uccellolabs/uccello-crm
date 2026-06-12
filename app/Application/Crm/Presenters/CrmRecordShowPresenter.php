@@ -3,6 +3,8 @@
 namespace App\Application\Crm\Presenters;
 
 use App\Application\Crm\DTOs\CrmRecordSidebarData;
+use App\Application\Crm\DTOs\SelectOptionData;
+use App\Application\Crm\Repositories\CrmTimelineReadRepositoryInterface;
 use App\Application\Crm\Services\CrmFormOptions;
 use App\Application\Crm\Services\CustomFields;
 use App\Application\Crm\Services\Picklists;
@@ -24,14 +26,11 @@ class CrmRecordShowPresenter
         private readonly CrmFormOptions $formOptions,
         private readonly CustomFields $customFields,
         private readonly Picklists $picklists,
+        private readonly CrmTimelineReadRepositoryInterface $timeline,
     ) {}
 
-    public function sidebar(
-        User $user,
-        HasCrmTimeline $record,
-        string $entityType,
-        Model $authorizable,
-    ): CrmRecordSidebarData {
+    public function sidebar(User $user, HasCrmTimeline $record, string $entityType): CrmRecordSidebarData
+    {
         return new CrmRecordSidebarData(
             activities: $this->activities($record),
             tasks: $this->tasks($record),
@@ -39,10 +38,6 @@ class CrmRecordShowPresenter
             activityTypes: $this->picklists->options(Picklist::ActivityType),
             taskPriorities: $this->picklists->options(Picklist::TaskPriority),
             customFields: $this->customFields->forFrontend($entityType),
-            can: [
-                'update' => $user->can('update', $authorizable),
-                'delete' => $user->can('delete', $authorizable),
-            ],
         );
     }
 
@@ -54,13 +49,19 @@ class CrmRecordShowPresenter
             ->all());
     }
 
+    /** @return list<array{value: int|string, label: string}> */
+    public function membersAsArray(User $user): array
+    {
+        return array_map(
+            fn (SelectOptionData $option) => $option->toArray(),
+            $this->formOptions->owners($user),
+        );
+    }
+
     /** @return list<array<string, mixed>> */
     private function activities(HasCrmTimeline $record): array
     {
-        return array_values($record->activities()
-            ->with('user:id,name')
-            ->latest('occurred_at')
-            ->get()
+        return array_values($this->timeline->activitiesFor($record)
             ->map(fn (Activity $activity) => [
                 'id' => $activity->id,
                 'type' => $activity->type,
@@ -76,11 +77,7 @@ class CrmRecordShowPresenter
     /** @return list<array<string, mixed>> */
     private function tasks(HasCrmTimeline $record): array
     {
-        return array_values($record->tasks()
-            ->with('assignee:id,name')
-            ->orderByRaw('completed_at is null desc')
-            ->orderByRaw('due_at asc nulls last')
-            ->get()
+        return array_values($this->timeline->tasksFor($record)
             ->map(fn (Task $task) => [
                 'id' => $task->id,
                 'title' => $task->title,

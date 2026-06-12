@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Teams;
 
+use App\Application\Shared\Presenters\EnumLabels;
 use App\Domain\Shared\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
@@ -78,7 +79,7 @@ class TeamTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('teams/Edit')
                 ->where('members.0.role', TeamRole::Owner->value)
-                ->where('members.0.role_label', TeamRole::Owner->label()),
+                ->where('members.0.role_label', EnumLabels::teamRole(TeamRole::Owner)),
             );
     }
 

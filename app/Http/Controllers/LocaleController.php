@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Middleware\SetLocale;
+use App\Application\Settings\UseCases\UpdateLocale;
+use App\Http\Requests\Settings\UpdateLocaleRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class LocaleController extends Controller
 {
@@ -14,16 +13,12 @@ class LocaleController extends Controller
      * the user's profile column when authenticated. The Inertia visit reloads
      * the shared props so the UI re-renders in the new language.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(UpdateLocaleRequest $request, UpdateLocale $updateLocale): RedirectResponse
     {
-        $validated = $request->validate([
-            'locale' => ['required', 'string', Rule::in(SetLocale::SUPPORTED)],
-        ]);
+        $command = $request->toCommand();
 
-        $locale = $validated['locale'];
+        $updateLocale->handle($request->user(), $command);
 
-        $request->user()?->update(['locale' => $locale]);
-
-        return back()->withCookie(cookie('locale', $locale, 60 * 24 * 365));
+        return back()->withCookie(cookie('locale', $command->locale, 60 * 24 * 365));
     }
 }

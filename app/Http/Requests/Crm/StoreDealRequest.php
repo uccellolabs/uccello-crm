@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\Crm;
 
+use App\Application\Deals\Commands\CreateDealCommand;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
 class StoreDealRequest extends CrmFormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -37,5 +36,23 @@ class StoreDealRequest extends CrmFormRequest
     protected function customFieldEntity(): ?string
     {
         return 'deal';
+    }
+
+    public function toCommand(): CreateDealCommand
+    {
+        $data = $this->validatedWithCustomFields();
+
+        return CreateDealCommand::fromFormInput(
+            name: $data['name'],
+            pipelineId: (int) $data['pipeline_id'],
+            pipelineStageId: (int) $data['pipeline_stage_id'],
+            amount: isset($data['amount']) ? (float) $data['amount'] : null,
+            currency: $data['currency'] ?? null,
+            companyId: isset($data['company_id']) ? (int) $data['company_id'] : null,
+            contactId: isset($data['contact_id']) ? (int) $data['contact_id'] : null,
+            expectedCloseDate: $data['expected_close_date'] ?? null,
+            ownerId: isset($data['owner_id']) ? (int) $data['owner_id'] : null,
+            customFields: $data['custom_fields'] ?? null,
+        );
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Crm;
 use App\Application\Assistant\Assistant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Crm\AssistantChatRequest;
-use App\Infrastructure\Assistant\AssistantUnavailableException;
+use App\Application\Assistant\AssistantUnavailableException;
 use App\Models\Assistant as AssistantResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;

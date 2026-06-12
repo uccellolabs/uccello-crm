@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Assistant;
 
+use App\Application\Assistant\AssistantUnavailableException;
 use App\Application\Assistant\Assistant;
 use App\Infrastructure\Assistant\Tools\AggregateRecordsTool;
 use App\Infrastructure\Assistant\Tools\GetRecordTool;

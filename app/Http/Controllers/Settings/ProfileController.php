@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Application\Settings\UseCases\DeleteProfile;
+use App\Application\Settings\UseCases\UpdateProfile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
@@ -14,9 +16,6 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    /**
-     * Show the user's profile settings page.
-     */
     public function edit(Request $request): Response
     {
         return Inertia::render('settings/Profile', [
@@ -25,34 +24,22 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, UpdateProfile $updateProfile): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
+        $updateProfile->handle($request->user(), $request->toCommand());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('profile.edit');
     }
 
-    /**
-     * Delete the user's profile.
-     */
-    public function destroy(ProfileDeleteRequest $request): RedirectResponse
+    public function destroy(ProfileDeleteRequest $request, DeleteProfile $deleteProfile): RedirectResponse
     {
         $user = $request->user();
 
         Auth::logout();
 
-        $user->delete();
+        $deleteProfile->handle($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

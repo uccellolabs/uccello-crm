@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Application\Teams\Presenters\UserTeamPresenter;
+use App\Application\Teams\Queries\ListUserTeamsQueryInterface;
 use App\Domain\Shared\Enums\TeamPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -9,6 +11,11 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(
+        private readonly ListUserTeamsQueryInterface $listUserTeams,
+        private readonly UserTeamPresenter $userTeamPresenter,
+    ) {}
+
     /**
      * Per-request cache of the loaded translation dictionary.
      *
@@ -56,8 +63,12 @@ class HandleInertiaRequests extends Middleware
             'sidebarPromo' => (bool) config('uccello.sidebar_promo.enabled'),
             'locale' => app()->getLocale(),
             'translations' => fn (): array => $this->translations(),
-            'currentTeam' => fn () => $user?->currentTeam ? $user->toUserTeam($user->currentTeam) : null,
-            'teams' => fn () => $user?->toUserTeams(includeCurrent: true) ?? [],
+            'currentTeam' => fn () => $user?->currentTeam
+                ? $this->userTeamPresenter->present($user, $user->currentTeam)
+                : null,
+            'teams' => fn () => $user
+                ? $this->listUserTeams->forUser($user, includeCurrent: true)->all()
+                : [],
             'permissions' => fn (): array => [
                 'manageCustomFields' => (bool) ($user?->currentTeam
                     && $user->hasTeamPermission($user->currentTeam, TeamPermission::ManageCustomFields)),

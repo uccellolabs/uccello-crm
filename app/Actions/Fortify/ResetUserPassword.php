@@ -2,6 +2,8 @@
 
 namespace App\Actions\Fortify;
 
+use App\Application\Auth\Commands\ResetPasswordCommand;
+use App\Application\Auth\UseCases\ResetPassword;
 use App\Concerns\PasswordValidationRules;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -11,9 +13,9 @@ class ResetUserPassword implements ResetsUserPasswords
 {
     use PasswordValidationRules;
 
+    public function __construct(private ResetPassword $resetPassword) {}
+
     /**
-     * Validate and reset the user's forgotten password.
-     *
      * @param  array<string, string>  $input
      */
     public function reset(User $user, array $input): void
@@ -22,8 +24,8 @@ class ResetUserPassword implements ResetsUserPasswords
             'password' => $this->passwordRules(),
         ])->validate();
 
-        $user->forceFill([
-            'password' => $input['password'],
-        ])->save();
+        $this->resetPassword->handle($user, new ResetPasswordCommand(
+            password: $input['password'],
+        ));
     }
 }

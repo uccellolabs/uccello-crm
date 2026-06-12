@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Teams;
 
+use App\Application\Teams\Commands\InviteMemberCommand;
 use App\Domain\Shared\Enums\TeamRole;
 use App\Models\Team;
 use App\Rules\UniqueTeamInvitation;
@@ -24,7 +25,15 @@ class CreateTeamInvitationRequest extends FormRequest
 
         return [
             'email' => ['required', 'string', 'email', 'max:255', new UniqueTeamInvitation($team)],
-            'role' => ['required', 'string', Rule::enum(TeamRole::class)],
+            'role' => ['required', 'string', Rule::in(TeamRole::assignableValues())],
         ];
+    }
+
+    public function toCommand(): InviteMemberCommand
+    {
+        return new InviteMemberCommand(
+            email: $this->validated('email'),
+            role: TeamRole::from($this->validated('role')),
+        );
     }
 }

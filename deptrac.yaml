@@ -15,6 +15,18 @@ deptrac:
       collectors:
         - type: classLike
           value: App\\Infrastructure\\.*
+    - name: Models
+      collectors:
+        - type: classLike
+          value: App\\Models\\.*
+    - name: Concerns
+      collectors:
+        - type: classLike
+          value: App\\Concerns\\.*
+    - name: Policies
+      collectors:
+        - type: classLike
+          value: App\\Policies\\.*
     - name: Framework
       collectors:
         - type: bool
@@ -28,22 +40,48 @@ deptrac:
               value: App\\Application\\.*
             - type: classLike
               value: App\\Infrastructure\\.*
+            - type: classLike
+              value: App\\Models\\.*
+            - type: classLike
+              value: App\\Concerns\\.*
+            - type: classLike
+              value: App\\Policies\\.*
   ruleset:
     Domain:
       - Domain
+      - Models
       - Framework
     Application:
       - Domain
       - Application
-      - Infrastructure
+      - Models
       - Framework
     Infrastructure:
       - Domain
       - Application
       - Infrastructure
+      - Models
+      - Concerns
+      - Framework
+    Models:
+      - Domain
+      - Models
+      - Concerns
+      - Framework
+    Concerns:
+      - Domain
+      - Models
+      - Concerns
+      - Framework
+    Policies:
+      - Domain
+      - Models
+      - Policies
       - Framework
     Framework:
       - Domain
       - Application
-      - Infrastructure
+      - Models
+      - Concerns
+      - Policies
       - Framework

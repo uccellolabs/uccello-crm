@@ -30,14 +30,14 @@ class AssistantChatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'messages' => ['required', 'array', 'min:1', 'max:40'],
-            'messages.*.role' => ['required', Rule::in(['user', 'assistant'])],
-            'messages.*.content' => ['required', 'string', 'max:8000'],
+            'messages' => ['required', 'array', 'min:1', 'max:20'],
+            'messages.*.role' => ['required', Rule::in(['user'])],
+            'messages.*.content' => ['required', 'string', 'max:2000'],
         ];
     }
 
     /**
-     * The validated conversation history.
+     * User messages only — assistant turns from the client are rejected at validation.
      *
      * @return list<array{role: string, content: string}>
      */
@@ -48,7 +48,7 @@ class AssistantChatRequest extends FormRequest
 
         return array_map(
             static fn (array $message): array => [
-                'role' => $message['role'],
+                'role' => 'user',
                 'content' => trim($message['content']),
             ],
             array_values($messages),

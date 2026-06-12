@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Teams;
 
-use App\Domain\Shared\Enums\TeamRole;
+use App\Application\Shared\Results\OperationResult;
+use App\Application\Teams\UseCases\RemoveMember;
+use App\Application\Teams\UseCases\UpdateMember;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teams\UpdateTeamMemberRequest;
 use App\Models\Team;
@@ -13,40 +15,29 @@ use Inertia\Inertia;
 
 class TeamMemberController extends Controller
 {
-    /**
-     * Update the specified team member's role.
-     */
-    public function update(UpdateTeamMemberRequest $request, Team $team, User $user): RedirectResponse
-    {
+    public function update(
+        UpdateTeamMemberRequest $request,
+        Team $team,
+        User $user,
+        UpdateMember $updateMember,
+    ): RedirectResponse {
         Gate::authorize('updateMember', $team);
 
-        $newRole = TeamRole::from($request->validated('role'));
-
-        $team->memberships()
-            ->where('user_id', $user->id)
-            ->firstOrFail()
-            ->update(['role' => $newRole]);
+        $updateMember->handle($team, $user, $request->toCommand());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Member role updated.')]);
 
         return to_route('teams.edit', ['team' => $team->slug]);
     }
 
-    /**
-     * Remove the specified team member.
-     */
-    public function destroy(Team $team, User $user): RedirectResponse
+    public function destroy(Team $team, User $user, RemoveMember $removeMember): RedirectResponse
     {
         Gate::authorize('removeMember', $team);
 
-        abort_if($team->owner()?->is($user), 403, __('The team owner cannot be removed.'));
+        $result = $removeMember->handle($team, $user);
 
-        $team->memberships()
-            ->where('user_id', $user->id)
-            ->delete();
-
-        if ($user->isCurrentTeam($team)) {
-            $user->switchTeam($user->personalTeam());
+        if ($result === OperationResult::NotAllowed) {
+            abort(403);
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Member removed.')]);

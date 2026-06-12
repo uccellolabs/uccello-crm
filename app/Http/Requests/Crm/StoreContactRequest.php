@@ -2,13 +2,12 @@
 
 namespace App\Http\Requests\Crm;
 
+use App\Application\Contacts\Commands\CreateContactCommand;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class StoreContactRequest extends CrmFormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -28,5 +27,21 @@ class StoreContactRequest extends CrmFormRequest
     protected function customFieldEntity(): ?string
     {
         return 'contact';
+    }
+
+    public function toCommand(): CreateContactCommand
+    {
+        $data = $this->validatedWithCustomFields();
+
+        return new CreateContactCommand(
+            firstName: $data['first_name'],
+            lastName: $data['last_name'],
+            email: $data['email'] ?? null,
+            phone: $data['phone'] ?? null,
+            jobTitle: $data['job_title'] ?? null,
+            companyId: isset($data['company_id']) ? (int) $data['company_id'] : null,
+            ownerId: isset($data['owner_id']) ? (int) $data['owner_id'] : null,
+            customFields: $data['custom_fields'] ?? null,
+        );
     }
 }

@@ -29,6 +29,11 @@ interface CrmFormOptions
     public function contacts(): array;
 
     /**
+     * @return list<SelectOptionData>
+     */
+    public function deals(): array;
+
+    /**
      * @return list<array<string, mixed>>
      */
     public function pipelinesWithStages(): array;

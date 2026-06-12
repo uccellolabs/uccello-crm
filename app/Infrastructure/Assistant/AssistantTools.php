@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Assistant;
 
+use App\Application\Shared\Presenters\EnumLabels;
 use App\Application\Crm\Services\CustomFields;
 use App\Application\Crm\Services\Picklists;
 use App\Domain\Shared\Enums\CustomFieldType;
@@ -127,7 +128,7 @@ class AssistantTools
             $lines[] = 'Étapes du pipeline : '.implode(', ', $stages).'.';
         }
         $lines[] = 'Statuts d\'opportunité : '.collect(DealStatus::cases())
-            ->map(fn (DealStatus $s) => "{$s->value} ({$s->label()})")->implode(', ').'.';
+            ->map(fn (DealStatus $s) => "{$s->value} (".EnumLabels::dealStatus($s).')')->implode(', ').'.';
         $lines[] = 'Secteurs (industry) : '.$this->picklistValues(Picklist::Industry).'.';
         $lines[] = 'Priorités de tâche : '.$this->picklistValues(Picklist::TaskPriority).'.';
         $lines[] = 'Types d\'activité : '.$this->picklistValues(Picklist::ActivityType).'.';
@@ -479,7 +480,7 @@ class AssistantTools
             'amount' => $m->amount !== null ? (float) $m->amount : null,
             'currency' => $m->currency,
             'status' => $m->status->value,
-            'status_label' => $m->status->label(),
+            'status_label' => EnumLabels::dealStatus($m->status),
             'stage' => $m->stage->name,
             'pipeline' => $m->pipeline->name,
             'company' => $m->company?->name,
@@ -670,7 +671,7 @@ class AssistantTools
     private function groupValue(string $module, Model $model, string $groupBy): ?string
     {
         $standard = match ($groupBy) {
-            'status' => $model instanceof Deal ? $model->status->label() : null,
+            'status' => $model instanceof Deal ? EnumLabels::dealStatus($model->status) : null,
             'stage' => $model instanceof Deal ? $model->stage->name : null,
             'pipeline' => $model instanceof Deal ? $model->pipeline->name : null,
             'currency' => $model instanceof Deal ? $model->currency : null,

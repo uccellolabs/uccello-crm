@@ -1,11 +1,11 @@
 <?php
 
+use App\Infrastructure\InfrastructureServiceProvider;
 use App\Providers\AppServiceProvider;
-use App\Providers\ArchitectureServiceProvider;
 use App\Providers\FortifyServiceProvider;
 
 return [
     AppServiceProvider::class,
-    ArchitectureServiceProvider::class,
+    InfrastructureServiceProvider::class,
     FortifyServiceProvider::class,
 ];
